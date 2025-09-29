@@ -10,9 +10,7 @@ authors = [ # put your name, email here!
     {name = "Gavin Travis", email = "gavin.travis@wsu.edu"},
 ]
 dependencies = [
-    "requests",
-    "flask",
-    "Jinja2",
+
 ]
 
 [project.optional-dependencies]
@@ -25,12 +23,20 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["attendance_tracker"]
+where = ["src"]
 
 [tool.ruff]
 line-length = 80 # max line length
-select = ["ALL"] # enable all rules for now, we can peel back the ones we dont like as we go!
+select = [
+    "E", # code style errs
+    "W", # code style warnings
+    "F", # pyflakes issues -> fancy set of rules
+    "D", # doc string rules
+    "N", # pep8 naming conventions
+    "B", # bugbear errs -> more fancy rules
+]
 exclude = [".venv", "*.md", ".egg*", ".git", ".gitignore"] # stuff not to lint + format
 
 [tool.pyright]
 venvPath = "."
+venv = ".venv/"

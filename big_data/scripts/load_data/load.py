@@ -6,7 +6,7 @@ import argparse
 import csv
 from pathlib import Path
 
-from big_data.scripts.load_data.data_types import YouTubeData
+from scripts.load_data.data_types import YouTubeData
 
 
 def _parse_file(file_path: Path) -> list[YouTubeData]:

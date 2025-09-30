@@ -18,7 +18,14 @@ def _parse_file(file_path: Path) -> list[YouTubeData]:
     with file_path.open(encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
 
-        return [YouTubeData.from_csv(line) for line in reader]
+        data = []
+        for line in reader:
+            try:
+                data.append(YouTubeData.from_csv(line))
+            except TypeError:
+                print(line)
+
+        return data
 
 
 def _parse_directory(dir_path: Path) -> dict[str, list[YouTubeData]]:
@@ -33,9 +40,6 @@ def _parse_directory(dir_path: Path) -> dict[str, list[YouTubeData]]:
             data |= _parse_directory(path)  # merge keys, values from below
         elif path.is_file() and not path.stem.startswith("log"):
             data[dir_path.stem] = _parse_file(path)  # add this file key, value
-        else:
-            msg = f"not a file or dir??? {dir_path}"
-            raise FileExistsError()
 
     return data
 
@@ -60,4 +64,4 @@ def main() -> None:
         msg = f"dir-path is not a file: {args.dir_path}"
         raise argparse.ArgumentError(None, msg)
 
-    print(f"path: {args.dir_path}\n")
+    # result = _parse_directory(args.dir_path)

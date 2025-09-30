@@ -3,6 +3,6 @@
 from __future__ import annotations
 
 if __name__ == "__main__":
-    import load_data
+    from scripts.load_data.load import main
 
-    load_data.main()
+    main()

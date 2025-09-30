@@ -1,6 +1,7 @@
 # dont commit venv stuffs or other artifacts
 .venv/*
 *.egg-info
+build/*
 
 # dont commit data folder contents
 data/*

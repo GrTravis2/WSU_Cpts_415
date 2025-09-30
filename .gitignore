@@ -2,5 +2,8 @@
 .venv/*
 *.egg-info
 
+# dont commit data folder contents
+data/*
+
 # dont commit empty script for testing stuff
 temp.py

@@ -32,7 +32,7 @@ def _iter_data(dir_path: Path) -> Generator[tuple[str, list[YouTubeData]]]:
 
     for path in dir_path.iterdir():
         if path.is_dir():
-            yield from _iter_data(path)  # merge keys, values from below
+            yield from _iter_data(path)  # new generator inside path
         elif path.is_file() and not path.stem.startswith("log"):
             yield path.parent.stem, _parse_file(path)
 
@@ -51,6 +51,7 @@ def main() -> None:
         required=True,
         default="",
     )
+    # TODO (Gavin): add another arg for optionally logging parsed data
 
     args = parser.parse_args()
     if args.dir_path.is_file():

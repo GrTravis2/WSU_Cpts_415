@@ -13,3 +13,10 @@
 6. **Enable pre-commit hooks with `pre-commit install`**, _this step is critical otherwise tools will not be enabled to validate git commits!!!_
 7. Once installed, make sure pre-commit is doing stuff with command `pre-commit run`
 8. Start building!
+
+## Scripts
+python script entry points are created with pyproject.toml config, see `[project.scripts]` table. Bash scripts will be located in ./tools directory.
+
+| Script File Name | Description | Args |
+| --- | --- | --- |
+| `big_data/scripts/load_data/load.py` | recursively loads data from text files not named log.txt | parent directory path, attempt to parse all txt files in parent |

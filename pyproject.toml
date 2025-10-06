@@ -22,8 +22,11 @@ dev = [
     "pyright",
 ]
 
+[project.scripts]
+load_data = "scripts.load_data.load:main"
+
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["big_data"]
 
 [tool.ruff]
 line-length = 80 # max line length

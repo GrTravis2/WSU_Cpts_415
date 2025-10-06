@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import csv
 import functools
 import json
@@ -93,13 +94,18 @@ def main() -> None:
 
         with (
             (o_path / f"{yy_mm_dd}.json").open("a", encoding="utf-8") as out,
-            (o_path / f"{yy_mm_dd}.log").open("a", encoding="utf-8") as log,
+            (
+                (o_path / f"{yy_mm_dd}.log").open("a", encoding="utf-8")
+                if args.log
+                else contextlib.nullcontext()
+            ) as log,
             (o_path / f"{yy_mm_dd}_stats.txt").open("a", encoding="utf-8") as s,
         ):
             jsons = [d.to_json(yy_mm_dd) + "\n" for d in data]  # data -> json
             out.writelines(jsons)
 
-            log.writelines(fails)  # raw lines to log
+            if log:
+                log.writelines(fails)  # raw lines to log
 
             # compute basic stats to be used for validation
             validate = {

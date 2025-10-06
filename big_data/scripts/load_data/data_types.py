@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import NamedTuple, Self
 
 
@@ -39,3 +40,26 @@ class YouTubeData(NamedTuple):
             case _:
                 msg = f"unexpected fields found from line {csv_line}"
                 raise TypeError(msg)
+
+    def to_json(self, folder_name: str) -> str:
+        """Convert to json string for storage in another file."""
+        d = {
+            "id": self.id,
+            "date_collected": folder_name,
+            "desc": {
+                "uploader": self.uploader_un,
+                "age": self.age_days,
+                "category": self.category,
+            },
+            "attr": {
+                "length": self.length_s,
+                "rate": self.video_rate,
+            },
+            "engagement": {
+                "views": self.views,
+                "ratings": self.num_ratings,
+                "comments": self.num_comments,
+            },
+            "r_ids": self.related_ids,
+        }
+        return json.dumps(d)

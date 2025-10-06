@@ -38,7 +38,11 @@ def _iter_data(
     for path in dir_path.iterdir():
         if path.is_dir():
             yield from _iter_data(path)  # new generator inside path
-        elif path.is_file() and not path.stem.startswith("log"):
+        elif (
+            path.is_file()  # must be a file
+            and not path.stem.startswith("log")  # no log files
+            and not path.stem.startswith(".")  # no hidden files
+        ):
             data, fails = _parse_file(path)
             yield path.parent.stem, data, fails
 
@@ -83,12 +87,16 @@ def main() -> None:
         raise argparse.ArgumentError(None, msg)
 
     for name, data, fails in _iter_data(i_path):
+        # data from 2007 has mm/dd format
+        # data from 2008+ has format yy/mm/dd -> prepend yy if name is short
+        yy_mm_dd = "07" + name if len(name) < 6 else name
+
         with (
-            (o_path / f"{name}.json").open("a", encoding="utf-8") as out,
-            (o_path / f"{name}.log").open("a", encoding="utf-8") as log,
-            (o_path / f"{name}_stats.txt").open("a", encoding="utf-8") as stats,
+            (o_path / f"{yy_mm_dd}.json").open("a", encoding="utf-8") as out,
+            (o_path / f"{yy_mm_dd}.log").open("a", encoding="utf-8") as log,
+            (o_path / f"{yy_mm_dd}_stats.txt").open("a", encoding="utf-8") as s,
         ):
-            jsons = [d.to_json(name) + "\n" for d in data]  # data -> json
+            jsons = [d.to_json(yy_mm_dd) + "\n" for d in data]  # data -> json
             out.writelines(jsons)
 
             log.writelines(fails)  # raw lines to log
@@ -100,4 +108,4 @@ def main() -> None:
                     lambda a, b: a + b.views, data, 0
                 ),
             }
-            stats.write(json.dumps(validate))
+            s.write(json.dumps(validate) + "\n")

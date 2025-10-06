@@ -41,11 +41,11 @@ class YouTubeData(NamedTuple):
                 msg = f"unexpected fields found from line {csv_line}"
                 raise TypeError(msg)
 
-    def to_json(self, folder_name: str) -> str:
+    def to_json(self, name: str) -> str:
         """Convert to json string for storage in another file."""
         d = {
             "id": self.id,
-            "date_collected": folder_name,
+            "date_collected": name,
             "desc": {
                 "uploader": self.uploader_un,
                 "age": self.age_days,

@@ -31,7 +31,14 @@ def _parse_file(path: Path) -> tuple[list[YouTubeData], list[str]]:
 def _iter_data(
     dir_path: Path,
 ) -> Generator[tuple[str, list[YouTubeData], list[str]]]:
-    """Parse each file in directory returning {'directory name', data}."""
+    """Parse each file in directory recursively.
+
+    Args: parent folder of files to parse
+
+    Returns:
+        tuple of folder_name, list of parsed data, list of rejected lines.
+
+    """
     if dir_path.is_dir() is False:
         msg = f"dir_path does not point to a directory: {dir_path}"
         raise FileNotFoundError(msg)

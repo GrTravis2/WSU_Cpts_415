@@ -19,4 +19,4 @@ python script entry points are created with pyproject.toml config, see `[project
 
 | Start Script | Description | Args |
 | --- | --- | --- |
-| `load_data <args>`  | recursively loads data from text files not named log.txt | `--dir-path <path> ` parent directory path, attempt to parse all txt files in parent |
+| `load_data <args>`  | recursively loads data from text files not named log.txt | `--i <path> ` parent directory path, attempt to parse all txt files in parent, `--o <path>` puts results in folder on `--o` path, `--log` optional write rejected lines to log file in out path |

@@ -22,7 +22,7 @@ def _parse_file(path: Path) -> tuple[list[YouTubeData], list[str]]:
         for line in reader:
             try:
                 data.append(YouTubeData.from_csv(line))
-            except TypeError:
+            except ValueError:
                 fails.append("\t".join(line) + "\n")
 
         return data, fails

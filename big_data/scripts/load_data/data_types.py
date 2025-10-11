@@ -39,7 +39,7 @@ class YouTubeData(NamedTuple):
                 )
             case _:
                 msg = f"unexpected fields found from line {csv_line}"
-                raise TypeError(msg)
+                raise ValueError(msg)
 
     def to_json(self, name: str) -> str:
         """Convert to json string for storage in another file."""

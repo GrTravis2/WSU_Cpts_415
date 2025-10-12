@@ -86,23 +86,22 @@ class MongoDBLoader:
         """Prepare data for mongo."""
         document = {
             "id": data.id,
-            "uploader_name": data.uploader_un,
-            "age_days": data.age_days,
-            "category": data.category,
-            "length_seconds": data.length_s,
-            "views": data.views,
-            "video_rating": data.video_rate,
-            "num_ratings": data.num_ratings,
-            "num_comments": data.num_comments,
+            "video_desc": {
+                "uploader": data.uploader_un,
+                "age_days": data.age_days,
+                "category": data.category,
+            },
+            "video_attri": {"length": data.length_s, "rating": data.video_rate},
+            "video_engagement": {
+                "views": data.views,
+                "num_ratings": data.num_ratings,
+                "num_comments": data.num_comments,
+            },
             "related_ids": data.related_ids,
         }
         # if upload date was successfully parsed
         if upload_date:
             document["upload_date"] = upload_date
-            document["upload_date_str"] = upload_date.strftime("%Y-%m-%d")
-            document["upload_year"] = upload_date.year
-            document["upload_month"] = upload_date.month
-            document["upload_day"] = upload_date.day
 
         return document
 

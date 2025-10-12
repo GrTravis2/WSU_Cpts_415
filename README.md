@@ -20,3 +20,4 @@ python script entry points are created with pyproject.toml config, see `[project
 | Start Script | Description | Args |
 | --- | --- | --- |
 | `load_data <args>`  | recursively loads data from text files not named log.txt | `--dir-path <path> ` parent directory path, attempt to parse all txt files in parent |
+| `load_data_mongo <args>` | recursively uses load_data to load data from text files into a mongodb | `--dir-path <path>` parent directory, like 0318, in quotes|

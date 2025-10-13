@@ -2,6 +2,7 @@
 .venv/*
 *.egg-info
 build/*
+*.pyc
 
 # dont commit data folder contents
 data/*

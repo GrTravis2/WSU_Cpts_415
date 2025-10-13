@@ -31,8 +31,8 @@ load_data_mongo = "scripts.load_data.mongo_loader:main"
 where = ["big_data"]
 
 [tool.ruff]
-line-length = 80 # max line length
-select = [
+line-length = 120 # max line length
+lint.select = [
     "E", # code style errs
     "W", # code style warnings
     "F", # pyflakes issues -> fancy set of rules

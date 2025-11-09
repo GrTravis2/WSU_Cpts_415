@@ -114,7 +114,7 @@ class MongoDBLoader:
 
     def load_data(
         self,
-        data_generator: Generator[tuple[str, list[YouTubeData]]],
+        data_generator: Generator[tuple[str, list[YouTubeData], list[str]]],
     ) -> dict:
         """Load data into mongodb."""
         # stats
@@ -124,7 +124,7 @@ class MongoDBLoader:
         total_duplicates = 0
 
         # loop through data from load
-        for dir_name, data_list in data_generator:
+        for dir_name, data_list, _ in data_generator:
             # date parsing
             upload_date = self.parse_directory_date(dir_name)
             date_info = (

@@ -48,11 +48,16 @@ class MongoDBLoader:
     def create_indexes(self) -> None:
         """Lookup indexes."""
         # fast lookup indexes, kinda cool
-        self.collection.create_index("id", unique=True, name="video_id_unique")
-        self.collection.create_index("uploader_un", name="uploader_index")
-        self.collection.create_index("category", name="category_index")
-        self.collection.create_index("views", name="views_index")
-        self.collection.create_index("video_rating", name="rating_index")
+        self.collection.create_index(
+            [("upload_date", 1), ("id", 1)],
+            unique=True,
+            name="composite_primary_key",
+        )
+        self.collection.create_index("id", name="video_id")
+        self.collection.create_index("video_desc.uploader", name="uploader_index")
+        self.collection.create_index("video_desc.category", name="category_index")
+        self.collection.create_index("video_engagement.views", name="views_index")
+        self.collection.create_index("video_attri.rating", name="rating_index")
         print("Database indexes created")
 
     # read the date from the directory, 4 and 6 digit versions
@@ -81,7 +86,9 @@ class MongoDBLoader:
 
     # simplify data for mongo
     def transform_data(
-        self, data: YouTubeData, upload_date: Optional[datetime] = None
+        self,
+        data: YouTubeData,
+        upload_date: Optional[datetime] = None,
     ) -> dict:
         """Prepare data for mongo."""
         document = {
@@ -106,7 +113,8 @@ class MongoDBLoader:
         return document
 
     def load_data(
-        self, data_generator: Generator[tuple[str, list[YouTubeData]]]
+        self,
+        data_generator: Generator[tuple[str, list[YouTubeData], list[str]]],
     ) -> dict:
         """Load data into mongodb."""
         # stats
@@ -116,7 +124,7 @@ class MongoDBLoader:
         total_duplicates = 0
 
         # loop through data from load
-        for dir_name, data_list in data_generator:
+        for dir_name, data_list, _ in data_generator:
             # date parsing
             upload_date = self.parse_directory_date(dir_name)
             date_info = (

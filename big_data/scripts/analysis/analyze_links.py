@@ -53,7 +53,7 @@ def main() -> None:
         df.video_engagement.getItem("views").alias("views"),
         df.video_engagement.getItem("num_ratings").alias("num_ratings"),
         df.video_engagement.getItem("num_comments").alias("num_comments"),
-        df.video_desc.getItem("category").alias("category"),
+        df.video_desc.getItem("age_days").alias("age_days"),
     )
     analyze_links = link_counts.join(dependent_vars, "id", "inner")
     analyze_links.orderBy(
@@ -68,7 +68,7 @@ def main() -> None:
         ("Times Linked", "Views"),
         ("Times Linked", "# of Ratings"),
         ("Times Linked", "# of Comments"),
-        ("Category", "Views"),
+        ("Times Linked", "Age in Days"),
     ]
     for i, a in enumerate(axes):
         x_label, y_label = labels[i]
@@ -95,9 +95,9 @@ def main() -> None:
         title="num links vs num comments",
     )
     pandas_df.plot.scatter(
-        x="category",
-        y="views",
+        x="sum(link_count)",
+        y="age_days",
         ax=axes[3],
-        title="category vs views",
+        title="num links vs age of video in days",
     )
     plt.show()

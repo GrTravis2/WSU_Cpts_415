@@ -74,9 +74,7 @@ def main() -> None:
             "distinct_categories": functions.size("collect_set(category)"),
         }
     )
-    clusters.orderBy(
-        functions.size(functions.col("collect_list(id)")), ascending=False
-    ).show()
+    clusters.orderBy(functions.size(functions.col("collect_list(id)")), ascending=False).show()
     print(f"cluster rows={clusters.count()}\n")
 
     # convert to pandas to use matplotlib api for viewing data
@@ -98,9 +96,7 @@ def main() -> None:
         ax=axes[0],
         title="Group Size vs Avg Views",
     )
-    reduced_df = clusters.filter(
-        functions.size(functions.col("collect_list(id)")) > 1
-    ).toPandas()
+    reduced_df = clusters.filter(functions.size(functions.col("collect_list(id)")) > 1).toPandas()
     reduced_df.plot.scatter(
         x="cluster_size",
         y="distinct_uploaders",

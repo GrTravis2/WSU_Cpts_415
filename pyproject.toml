@@ -53,6 +53,9 @@ lint.ignore = [
 ]
 exclude = [".venv", "*.md", ".egg*", ".git", ".gitignore"] # stuff not to lint + format
 
+[tool.black]
+line-length = 120 # match ruff
+
 [tool.pyright]
 venvPath = "."
 venv = ".venv/"

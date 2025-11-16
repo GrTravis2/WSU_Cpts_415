@@ -1,3 +1,5 @@
+"""Travis's validation script."""
+
 # iterate data folder and reading stat text files
 
 # write mongo db queries to pull down data and compare to the stat text files
@@ -15,6 +17,7 @@ from scripts.load_data.load import _iter_data
 
 
 def count_docs(collection):
+    """Count total documents."""
     # count the documents in MongoDB
     total_documents = collection.count_documents({})
     print("Total documents in MongoDB:", total_documents)
@@ -29,19 +32,18 @@ def count_docs(collection):
         if not (raw_file.exists()):
             print("Could not find raw data file!!")
         else:
-            for dir_name, data in _iter_data(raw_file):
+            for _, data, _ in _iter_data(raw_file):
                 total_raw_documents += len(data)
 
     # look through buffer to find "failed to parse" lines
-    total_parse_fails = sum(
-        1 for line in buffer.getvalue().splitlines() if "failed to parse" in line
-    )
+    total_parse_fails = sum(1 for line in buffer.getvalue().splitlines() if "failed to parse" in line)
 
     print("Total Documents Parsed:", total_raw_documents)
     print("Total Failed Parses:", total_parse_fails)
 
 
 def validate_schema(collection):
+    """Check for missing fields."""
     # check for missing fields
     bad_docs = 0
     doc_scanner = collection.find({}, {"_id": 0}).limit(10000)
@@ -68,7 +70,7 @@ def validate_schema(collection):
 
 
 def detect_duplicates(collection):
-    # find duplicate entries
+    """Find duplicate entries."""
     pipeline = [
         {"$group": {"_id": "$id", "count": {"$sum": 1}}},
         {"$match": {"count": {"$gt": 1}}},
@@ -82,6 +84,7 @@ def detect_duplicates(collection):
 
 
 def main():
+    """Script entry point."""
     print("Starting MongoDB data validation...")
     # connect to mongoDB
     client = MongoClient("mongodb://localhost:27017/")

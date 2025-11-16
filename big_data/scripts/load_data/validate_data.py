@@ -5,10 +5,11 @@
 # check if it matches
 
 import io
+from contextlib import redirect_stdout
+from pathlib import Path
+
 from pymongo import MongoClient
 from scripts.load_data.load import _iter_data
-from pathlib import Path
-from contextlib import redirect_stdout
 
 # check rows parsed vs rows in mongoDB
 
@@ -32,8 +33,9 @@ def count_docs(collection):
                 total_raw_documents += len(data)
 
     # look through buffer to find "failed to parse" lines
-    total_parse_fails = sum(1 for line in buffer.getvalue(
-    ).splitlines() if "failed to parse" in line)
+    total_parse_fails = sum(
+        1 for line in buffer.getvalue().splitlines() if "failed to parse" in line
+    )
 
     print("Total Documents Parsed:", total_raw_documents)
     print("Total Failed Parses:", total_parse_fails)

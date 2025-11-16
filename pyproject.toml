@@ -13,6 +13,7 @@ authors = [ # put your name, email here!
 dependencies = [
     "pymongo >= 4.0.0",
     "pyspark == 3.5.1", # latest version compatible with mongodb connector
+    "graphframes-py == 0.10.0",
     "pandas",
     "matplotlib",
     "setuptools" # needed for legacy 'diskutils' during pyspark -> pandas conversion
@@ -31,6 +32,7 @@ dev = [
 load_data = "scripts.load_data.load:main"
 load_data_mongo = "scripts.load_data.mongo_loader:main"
 analyze_links = "scripts.analysis.analyze_links:main"
+graph_filter = "scripts.analysis.graph_filter:main"
 
 [tool.setuptools.packages.find]
 where = ["big_data"]

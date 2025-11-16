@@ -101,11 +101,7 @@ def main() -> None:
 
         with (
             (o_path / f"{yy_mm_dd}.json").open("a", encoding="utf-8") as out,
-            (
-                (o_path / f"{yy_mm_dd}.log").open("a", encoding="utf-8")
-                if args.log
-                else contextlib.nullcontext()
-            ) as log,
+            (o_path / f"{yy_mm_dd}.log").open("a", encoding="utf-8") if args.log else contextlib.nullcontext() as log,
             (o_path / f"{yy_mm_dd}_stats.txt").open("a", encoding="utf-8") as s,
         ):
             jsons = [d.to_json(yy_mm_dd) + "\n" for d in data]  # data -> json
@@ -117,8 +113,6 @@ def main() -> None:
             # compute basic stats to be used for validation
             validate = {
                 "parsed_lines": len(data),  # count of good lines
-                "sum_views": functools.reduce(  # sum of views from good lines
-                    lambda a, b: a + b.views, data, 0
-                ),
+                "sum_views": functools.reduce(lambda a, b: a + b.views, data, 0),  # sum of views from good lines
             }
             s.write(json.dumps(validate) + "\n")

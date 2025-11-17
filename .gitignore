@@ -13,3 +13,4 @@ temp.py
 # Gavin specific scripts for making mongodb go
 tools/start_mongodb.sh
 tools/stop_mongodb.sh
+.vscode/settings.json

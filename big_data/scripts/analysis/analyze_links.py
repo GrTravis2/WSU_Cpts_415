@@ -55,6 +55,7 @@ def main() -> None:
         df.video_engagement.getItem("num_comments").alias("num_comments"),
         df.video_desc.getItem("age_days").alias("age_days"),
     )
+    # join both tables, only keeping rows that are in **BOTH** tables!
     analyze_links = link_counts.join(dependent_vars, "id", "inner")
     analyze_links.orderBy(
         "sum(link_count)",

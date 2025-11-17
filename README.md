@@ -23,3 +23,5 @@ python script entry points are created with pyproject.toml config, see `[project
 | `load_data_mongo <args>` | recursively uses load_data to load data from text files into a mongodb | `--dir-path <path>` parent directory, like 0318, in quotes|
 | `analyze_links` | process entire mongoDB and output relations between number of video connections against other video stats. | no args, also **CAUTION** this will run the entire DB's contents on your local machine, so be careful when calling this script :) |
 | `correlation_analysis` | Loads YouTube dataset from MongoDB to a spark data frame, creates a sub data frame of numeric fields. loops through the columns and returns correlation results from pairs of columns to a list of correlations. Prints results of Positive Negative and Near Zero Correlations. | no args |
+| `graph_filter` | Process up to 100,000 rows using the SCC algorithm plotting results | no args, but long script so be warned. |
+| `trending_predictor` | process entire mongoDB and output a trending score based off of user engagement, views, recency, and ratings. | no args

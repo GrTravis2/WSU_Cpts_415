@@ -23,3 +23,4 @@ python script entry points are created with pyproject.toml config, see `[project
 | `load_data_mongo <args>` | recursively uses load_data to load data from text files into a mongodb | `--dir-path <path>` parent directory, like 0318, in quotes|
 | `analyze_links` | process entire mongoDB and output relations between number of video connections against other video stats. | no args, also **CAUTION** this will run the entire DB's contents on your local machine, so be careful when calling this script :) |
 | `graph_filter` | Process up to 100,000 rows using the SCC algorithm plotting results | no args, but long script so be warned. |
+| `trending_predictor` | process entire mongoDB and output a trending score based off of user engagement, views, recency, and ratings. | no args

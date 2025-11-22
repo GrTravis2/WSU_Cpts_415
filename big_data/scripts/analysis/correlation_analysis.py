@@ -1,5 +1,17 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
+from pymongo import MongoClient
+import os
+os.environ["JAVA_TOOL_OPTIONS"] = "--add-opens=java.base/java.nio=ALL-UNNAMED"
+
+
+def import_spark():
+    from pyspark.sql import SparkSession
+    from pyspark.sql.functions import col
+    return SparkSession, col
+
+
+# Now import Spark
+SparkSession, col = import_spark()
+
 
 # loads youtube dataset from mongodb to spark
 
@@ -7,16 +19,17 @@ from pyspark.sql.functions import col
 def load_mongo_data(spark):
     df = (
         spark.read
-        .format("mongo")
-        .option("spark.mongodb.input.uri",
-                "mongodb://localhost:27017/youtube_analysis.videos")
+        .format("mongodb")
+        .option("database", "youtube_analysis")
+        .option("collection", "videos")
         .load()
     )
 
-    print("Loaded rows: ", df.count())
+    print("Loaded rows:", df.count())
     print("Full Youtube dataset Schema:")
     df.printSchema()
     return df
+
 
 # takes a spark data frame and returns a data frame with numeric columns
 
@@ -68,27 +81,48 @@ def compute_correlation(df):
     return correlation
 
 
+def save_to_mongo(correlation):
+
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client["youtube_analysis"]
+    collection = db["correlations"]
+
+    # remove old correlation data
+    collection.drop()
+
+    # turn correlation data into a mongo format
+    documents = []
+    for col1, col2, value in correlation:
+        if (value > 0.3):
+            category = "Positive"
+        elif (value < -0.3):
+            category = "Negative"
+        else:
+            category = "Near_Zero"
+        documents.append({
+            "col1": col1,
+            "col2": col2,
+            "value": value,
+            "category": category
+        })
+
+    if documents:
+        collection.insert_many(documents)
+
+    print("Correlation data saved to MongoDB!")
+
+
 def main():
     # start the spark session
     spark = (
         SparkSession.builder
         .appName("CorrelationAnalysis")
+        .master("local[*]")
+        .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
+        .config("spark.mongodb.read.connection.uri", "mongodb://localhost:27017/youtube_analysis")
+        .config("spark.mongodb.write.connection.uri", "mongodb://localhost:27017/youtube_analysis")
+        .config("spark.executor.memory", "4g")
         .config("spark.driver.memory", "4g")
-
-        .config("spark.locality.wait", "0")
-        .config("spark.executor.heartbeatInterval", "60s")
-
-        .config("spark.jars", ",".join([
-            "file:///C:/hadoop/lib/mongo-spark-connector_2.12-3.0.2.jar",
-            "file:///C:/hadoop/lib/mongodb-driver-sync-4.3.4.jar",
-            "file:///C:/hadoop/lib/mongodb-driver-core-4.3.4.jar",
-            "file:///C:/hadoop/lib/bson-4.3.4.jar"
-        ]))
-
-        .config("spark.mongodb.input.uri",
-                "mongodb://localhost:27017/youtube_analysis.videos")
-        .config("spark.mongodb.output.uri",
-                "mongodb://localhost:27017/youtube_analysis.videos")
         .getOrCreate()
     )
 
@@ -101,6 +135,9 @@ def main():
 
     # run the correlation values and return the a list of correlations
     correlation = compute_correlation(df_num)
+
+    # save to correlation data to mongoDB
+    save_to_mongo(correlation)
 
     # organize the correlations
     PostiveCorr = []

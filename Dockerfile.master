@@ -5,6 +5,9 @@ USER root
 WORKDIR /opt/spark
 RUN mkdir -p ./scripts/analysis
 COPY big_data/scripts/analysis ./scripts/analysis
+COPY spark-defaults.conf ./conf/
+
+
 ENV PYTHONPATH=/opt/spark
 RUN pip install --upgrade pip
 RUN pip install pyspark==3.3.2

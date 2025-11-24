@@ -9,6 +9,8 @@ services:
       - "7077:7077" # spark nodes network
     environment:
       - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
+    volumes:
+      - spark-events:/opt/spark/spark-events
 
   worker:
     build:
@@ -21,6 +23,8 @@ services:
       - SPARK_WORKER_CORES=1    # assume 1 core
       - SPARK_WORKER_MEMORY=1G  # and 1Gb of RAM
       - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
+    volumes:
+      - spark-events:/opt/spark/spark-events
 
   history:
     build:

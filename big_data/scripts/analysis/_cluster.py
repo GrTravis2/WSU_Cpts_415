@@ -4,7 +4,7 @@ import pathlib
 import subprocess
 
 
-def spark_submit(path: pathlib.Path) -> None:
+def spark_submit(path: pathlib.Path, packages: str) -> None:
     """Pass the given path to spark cluster to queue the job."""
     subprocess.run(
         [
@@ -15,6 +15,9 @@ def spark_submit(path: pathlib.Path) -> None:
             "/opt/spark/bin/spark-submit",
             "--master",
             "spark://master:7077",
-            str(path),
+            "--packages",
+            packages,
+            # str(path)
+            str("/".join(path.parts[1:])),
         ],
     )

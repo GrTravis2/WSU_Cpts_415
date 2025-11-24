@@ -1,11 +1,14 @@
-FROM apache/spark-py:latest
+FROM apache/spark-py:v3.3.2
 
 # run as root for package installs
-#USER root
-
-#COPY big_data ./big_data
-#COPY pyproject.toml ./
-#RUN python3 -m pip install .
+USER root
+WORKDIR /opt/spark
+RUN mkdir -p ./scripts/analysis
+COPY big_data/scripts/analysis ./scripts/analysis
+ENV PYTHONPATH=/opt/spark
+RUN pip install --upgrade pip
+RUN pip install pyspark==3.3.2
+RUN pip install pymongo==3.5.1
 
 # call build in master node startup script
 CMD ["/opt/spark/sbin/start-master.sh"]

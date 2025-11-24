@@ -1,4 +1,4 @@
-FROM apache/spark-py:latest
+FROM apache/spark-py:v3.3.2
 
 # give worker permission to do file stuff
 USER root

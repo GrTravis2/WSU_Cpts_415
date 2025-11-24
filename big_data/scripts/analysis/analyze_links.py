@@ -3,14 +3,14 @@
 import argparse
 import pathlib
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from pyspark.sql import SparkSession, functions
 from scripts.analysis import _cluster
 
 
-def new_spark_session(app_name: str, host: str = "localhost") -> SparkSession:
+def new_spark_session(app_name: str, *, host: str = "localhost", db_host: str = "localhost") -> SparkSession:
     """Create connection to mongodb using sparkSession object."""
-    mongo_uri = "mongodb://127.0.0.1/youtube_analysis.videos"
+    mongo_uri = f"mongodb://{db_host}/youtube_analysis.videos"
     mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
     spark: SparkSession = (  # init connection stuff
         SparkSession.builder.config("spark.driver.host", host)  # type: ignore
@@ -40,12 +40,12 @@ def main() -> None:
 
     if args.use_cluster:
         # pass script to spark cluster and let it do the work before exiting
-        script = pathlib.Path("./big_data/scripts/analysis/analyze_links.py")
-        assert script.exists()
-        _cluster.spark_submit(script)
+        script = pathlib.Path("big_data/scripts/analysis/analyze_links.py")
+        mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
+        _cluster.spark_submit(script, mongo_conn)
         return
 
-    spark = new_spark_session("analyze_links")
+    spark = new_spark_session("analyze_links", db_host="db:27017")
 
     # linters disagree here and I dont know how to fix T_T
     # fmt: off
@@ -85,6 +85,7 @@ def main() -> None:
         ascending=False,
     )
 
+    """
     # convert to pandas to use matplotlib api for viewing data
     _, axes = plt.subplots(nrows=2, ncols=2, figsize=(15, 15))
     axes = axes.flatten()
@@ -125,6 +126,7 @@ def main() -> None:
         title="num links vs age of video in days",
     )
     plt.show()
+    """
 
 
 if __name__ == "__main__":

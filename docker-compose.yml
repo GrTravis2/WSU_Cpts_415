@@ -8,7 +8,7 @@ services:
       - "8080:8080" # for web view
       - "7077:7077" # spark nodes network
     environment:
-      - SPARK_NO_DAEMONIZE=true       # sleep instead of terminate
+      - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
 
   worker:
     build:
@@ -20,7 +20,7 @@ services:
       - SPARK_MASTER_URL=spark://master:7077
       - SPARK_WORKER_CORES=1    # assume 1 core
       - SPARK_WORKER_MEMORY=1G  # and 1Gb of RAM
-      - SPARK_NO_DAEMONIZE=true       # sleep instead of terminate
+      - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
 
   history:
     build:
@@ -32,11 +32,11 @@ services:
     volumes:
       - spark-events:/tmp/spark-events # Mount a volume for event logs
     environment:
-      - SPARK_HISTORY_OPTS="-Dspark.history.fs.logDirectory=/tmp/spark-events"
-      - SPARK_NO_DAEMONIZE=true       # sleep instead of terminate
+      - SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=/tmp/spark-events
+      - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
 
   mongodb:
-    image: mongo:latest
+    image: mongo:8-noble
     container_name: db
     ports:
       - "27017:27017"

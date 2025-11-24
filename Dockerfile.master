@@ -1,0 +1,11 @@
+FROM apache/spark-py:latest
+
+# run as root for package installs
+#USER root
+
+#COPY big_data ./big_data
+#COPY pyproject.toml ./
+#RUN python3 -m pip install .
+
+# call build in master node startup script
+CMD ["/opt/spark/sbin/start-master.sh"]

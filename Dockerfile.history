@@ -1,0 +1,7 @@
+FROM apache/spark-py:latest
+
+# give permissions to do file things like the worker
+USER root
+
+# call build in master node startup script
+CMD ["/opt/spark/sbin/start-history-server.sh"]

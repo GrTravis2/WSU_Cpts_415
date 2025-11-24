@@ -1,7 +1,11 @@
 """PySpark Algorithm for comparing YouTube Data related ids vs popularity."""
 
+import argparse
+import pathlib
+
 import matplotlib.pyplot as plt
 from pyspark.sql import SparkSession, functions
+from scripts.analysis import _cluster
 
 
 def new_spark_session(app_name: str, host: str = "localhost") -> SparkSession:
@@ -22,6 +26,25 @@ def new_spark_session(app_name: str, host: str = "localhost") -> SparkSession:
 
 def main() -> None:
     """Script entry point."""
+    parser = argparse.ArgumentParser(
+        prog="YouTube data loader",
+        description="loads YT data from text w/ predetermined schema",
+    )
+    parser.add_argument(
+        "--use-cluster",
+        action="store_true",
+        help="submit job to pyspark cluster for processing",
+        default=False,
+    )
+    args = parser.parse_args()
+
+    if args.use_cluster:
+        # pass script to spark cluster and let it do the work before exiting
+        script = pathlib.Path("./big_data/scripts/analysis/analyze_links.py")
+        assert script.exists()
+        _cluster.spark_submit(script)
+        return
+
     spark = new_spark_session("analyze_links")
 
     # linters disagree here and I dont know how to fix T_T
@@ -102,3 +125,7 @@ def main() -> None:
         title="num links vs age of video in days",
     )
     plt.show()
+
+
+if __name__ == "__main__":
+    main()

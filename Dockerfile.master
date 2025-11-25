@@ -1,0 +1,20 @@
+FROM apache/spark-py:v3.3.2
+
+# run as root for package installs and file ops
+USER root
+WORKDIR /opt/spark
+RUN mkdir -p ./scripts/analysis
+COPY big_data/scripts/analysis ./scripts/analysis
+COPY spark-defaults.conf ./conf/
+
+# needs pyspark and pymongo for analysis scripts
+ENV PYTHONPATH=/opt/spark
+RUN pip install --upgrade pip
+RUN pip install pyspark==3.3.2
+RUN pip install pymongo==3.5.1
+RUN pip install graphframes-py
+RUN pip install pandas
+RUN pip install matplotlib
+
+# call build in master node startup script
+CMD ["/opt/spark/sbin/start-master.sh"]

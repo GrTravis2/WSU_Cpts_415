@@ -1,0 +1,12 @@
+# ignore all hidden files and artifacts
+.*
+*/__pycache__/*
+*.png
+
+# ignore dev only stuff (docs, bash scripts, entry points, data)
+build/*
+data/*
+docs/*
+resources/*
+tools/*
+*.md

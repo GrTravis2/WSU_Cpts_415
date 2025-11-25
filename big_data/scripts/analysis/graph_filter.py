@@ -51,7 +51,7 @@ def plot_image(df: pandas.DataFrame) -> None:
         title="Group Size vs Avg Views",
     )
     # reduced_df = df.filter(functions.size(functions.col("collect_list(id)")) > 1).toPandas()
-    reduced_df = df[df["collect_list(id)"] > 1]
+    reduced_df = df[df["collect_list(id)"].apply(len) > 1]
     reduced_df.plot.scatter(
         x="cluster_size",
         y="distinct_uploaders",
@@ -64,7 +64,7 @@ def plot_image(df: pandas.DataFrame) -> None:
         ax=axes[2],
         title="Group Size vs Distinct Categories",
     )
-    plt.show()
+    plt.savefig("graph_filter.png")
 
 
 def main() -> None:
@@ -102,8 +102,7 @@ def main() -> None:
         df = pandas.DataFrame(list(links.find()))
         plot_image(df)
         return
-
-    spark = new_spark_session("graph_filter", db_host="db:27017")
+    spark = new_spark_session("graph_filter")
 
     # linters disagree here and I dont know how to fix T_T
     # fmt: off

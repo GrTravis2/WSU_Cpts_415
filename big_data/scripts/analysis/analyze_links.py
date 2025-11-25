@@ -144,7 +144,13 @@ def main() -> None:
         ascending=False,
     )
 
-    (analyze_links.write.format("mongodb").mode("overwrite").save())
+    (
+        analyze_links.write.format("mongodb")
+        .mode("overwrite")
+        .option("database", "youtube_analysis")
+        .option("collection", "analyze_links")
+        .save()
+    )
 
 
 if __name__ == "__main__":

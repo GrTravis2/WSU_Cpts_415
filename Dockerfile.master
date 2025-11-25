@@ -12,7 +12,9 @@ ENV PYTHONPATH=/opt/spark
 RUN pip install --upgrade pip
 RUN pip install pyspark==3.3.2
 RUN pip install pymongo==3.5.1
-RUN pip install numpy
+RUN pip install graphframes-py
+RUN pip install pandas
+RUN pip install matplotlib
 
 # call build in master node startup script
 CMD ["/opt/spark/sbin/start-master.sh"]

@@ -12,13 +12,12 @@ def spark_submit(script_name: str, packages: str) -> None:
             "docker",
             "exec",
             "-it",
-            "master",
-            "/opt/spark/bin/spark-submit",
+            "master",  # run this command on master container
+            "/opt/spark/bin/spark-submit",  # submit as spark job
             "--master",
-            "spark://master:7077",
-            "--packages",
+            "spark://master:7077",  # use the spark network
+            "--packages",  # include passed packages
             packages,
-            # str(path)
-            str("/".join(path.parts[1:])),
+            str("/".join(path.parts[1:])),  # adjust for flattened scripts
         ],
     )

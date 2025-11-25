@@ -144,8 +144,6 @@ def main() -> None:
         ascending=False,
     )
 
-    # mongo_write = "mongodb://db/youtube_analysis.analyze_links"
-    # mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
     (analyze_links.write.format("mongodb").mode("overwrite").save())
 
 

@@ -1,16 +1,28 @@
+from pyspark.sql.functions import col
+from pyspark.sql import SparkSession
+from pyspark.ml.stat import Correlation
+from pyspark.ml.feature import VectorAssembler
 from pymongo import MongoClient
-import os
-os.environ["JAVA_TOOL_OPTIONS"] = "--add-opens=java.base/java.nio=ALL-UNNAMED"
+import argparse
 
 
-def import_spark():
-    from pyspark.sql import SparkSession
-    from pyspark.sql.functions import col
-    return SparkSession, col
+def parse_args():
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument("--mode", type=str, default="local",
+                        help="Execution mode: local or cluster")
 
-# Now import Spark
-SparkSession, col = import_spark()
+    parser.add_argument("--workers", type=int, default=2,
+                        help="Number of worker cores for Spark")
+
+    parser.add_argument("--mongo-uri", type=str,
+                        default="mongodb://localhost:27017",
+                        help="MongoDB connection URI")
+
+    parser.add_argument("--trial-id", type=int, default=0,
+                        help="Trial number for repeated test runs")
+
+    return parser.parse_args()
 
 
 # loads youtube dataset from mongodb to spark
@@ -26,8 +38,6 @@ def load_mongo_data(spark):
     )
 
     print("Loaded rows:", df.count())
-    print("Full Youtube dataset Schema:")
-    df.printSchema()
     return df
 
 
@@ -56,10 +66,6 @@ def numeric_df(df):
     # remove any empty rows
     df_num = df_num.dropna()
 
-    print("Rows without blank values: ", df_num.count())
-    print("Numeric data frame schema:")
-    df_num.printSchema()
-
     return df_num
 
 # computes the correlation of the numeric data frame and returns a list of correlations
@@ -67,23 +73,37 @@ def numeric_df(df):
 
 def compute_correlation(df):
     numeric_cols = df.columns  # list of the numeric columns
+
+    assembler = VectorAssembler(inputCols=numeric_cols, outputCol="features")
+
+    vector_df = assembler.transform(df).select("features")
+
+    result = Correlation.corr(vector_df, "features", "pearson")
+    row = result.head()
+    corr_matrix = row[0]
+
+    matrix = corr_matrix.toArray()
+
     correlation = []
 
-    # loop through every pair of columns and add the results to a correlation list
     for i in range(len(numeric_cols)):
         for j in range(i + 1, len(numeric_cols)):
-            col1 = numeric_cols[i]
-            col2 = numeric_cols[j]
-            raw = df.stat.corr(col1, col2)
-            value = round(raw, 4) if raw is not None else None
-            correlation.append((col1, col2, value))
+            # Get the correlation number from the matrix
+            value = round(matrix[i][j], 4)
+
+            # Build the same tuple structure your old code used
+            correlation.append((
+                numeric_cols[i],   # column name for row i
+                numeric_cols[j],   # column name for column j
+                value              # the Pearson correlation between them
+            ))
 
     return correlation
 
 
-def save_to_mongo(correlation):
+def save_to_mongo(correlation, args):
+    client = MongoClient(args.mongo_uri)
 
-    client = MongoClient("mongodb://localhost:27017/")
     db = client["youtube_analysis"]
     collection = db["correlations"]
 
@@ -103,7 +123,8 @@ def save_to_mongo(correlation):
             "col1": col1,
             "col2": col2,
             "value": value,
-            "category": category
+            "category": category,
+            "trial_id": args.trial_id,
         })
 
     if documents:
@@ -112,32 +133,48 @@ def save_to_mongo(correlation):
     print("Correlation data saved to MongoDB!")
 
 
-def main():
+def main(args):
+    import time
+    start_time = time.time()
+
+    print(
+        f"Running trial {args.trial_id} with {args.workers} workers in {args.mode} mode")
+
+    # Select cluster or local execution
+    if args.mode == "cluster":
+        master = "spark://master:7077"
+    else:
+        master = "local[*]"
+
+    executor_cores = str(args.workers)
+
     # start the spark session
     spark = (
         SparkSession.builder
         .appName("CorrelationAnalysis")
-        .master("local[*]")
+        .master(master)
+        .config("spark.executor.cores", executor_cores)
+        .config("spark.executor.memory", "6g")
+        .config("spark.driver.memory", "6g")
+        .config("spark.sql.shuffle.partitions", "4")
         .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
-        .config("spark.mongodb.read.connection.uri", "mongodb://localhost:27017/youtube_analysis")
-        .config("spark.mongodb.write.connection.uri", "mongodb://localhost:27017/youtube_analysis")
-        .config("spark.executor.memory", "4g")
-        .config("spark.driver.memory", "4g")
+        .config("spark.mongodb.read.connection.uri", f"{args.mongo_uri}/youtube_analysis")
+        .config("spark.mongodb.write.connection.uri", f"{args.mongo_uri}/youtube_analysis")
+
         .getOrCreate()
     )
 
-    # load the mongo data into spark
+    # load data
     df = load_mongo_data(spark)
-    print("Loaded rows:", df.count())
 
-    # create a data frame with just numeric values
+    # numeric df
     df_num = numeric_df(df)
 
-    # run the correlation values and return the a list of correlations
+    # compute correlation
     correlation = compute_correlation(df_num)
 
-    # save to correlation data to mongoDB
-    save_to_mongo(correlation)
+    # save results
+    save_to_mongo(correlation, args)
 
     # organize the correlations
     PostiveCorr = []
@@ -145,13 +182,12 @@ def main():
     NearZeroCorr = []
 
     for col1, col2, value in correlation:
-        if (col1 != col2):  # only entries that aren't the same column
-            if (value > 0.3):
-                PostiveCorr.append((col1, col2, value))
-            elif (value < -0.3):
-                NegativeCorr.append((col1, col2, value))
-            else:
-                NearZeroCorr.append((col1, col2, value))
+        if (value > 0.3):
+            PostiveCorr.append((col1, col2, value))
+        elif (value < -0.3):
+            NegativeCorr.append((col1, col2, value))
+        else:
+            NearZeroCorr.append((col1, col2, value))
 
     # print results
     print("Positve Correlations:")
@@ -166,8 +202,13 @@ def main():
     for col1, col2, value in NearZeroCorr:
         print(col1, " and ", col2, " correlation score: ", value)
 
+    end_time = time.time()
+    runtime = end_time - start_time
+    print(f"\nTotal Runtime (seconds): {runtime:.2f}")
+
     spark.stop()
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    main(args)

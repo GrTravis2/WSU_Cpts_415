@@ -54,9 +54,12 @@ class MongoDBLoader:
             name="composite_primary_key",
         )
         self.collection.create_index("id", name="video_id")
-        self.collection.create_index("video_desc.uploader", name="uploader_index")
-        self.collection.create_index("video_desc.category", name="category_index")
-        self.collection.create_index("video_engagement.views", name="views_index")
+        self.collection.create_index(
+            "video_desc.uploader", name="uploader_index")
+        self.collection.create_index(
+            "video_desc.category", name="category_index")
+        self.collection.create_index(
+            "video_engagement.views", name="views_index")
         self.collection.create_index("video_attri.rating", name="rating_index")
         print("Database indexes created")
 
@@ -326,3 +329,7 @@ def main() -> None:
         traceback.print_exc()
     finally:
         loader.close()
+
+
+if __name__ == "__main__":
+    main()

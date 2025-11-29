@@ -37,7 +37,6 @@ def load_mongo_data(spark):
         .load()
     )
 
-    print("Loaded rows:", df.count())
     return df
 
 
@@ -45,28 +44,30 @@ def load_mongo_data(spark):
 
 
 def numeric_df(df):
-    numeric_cols = [
-        "age_days",
-        "length_seconds",
-        "num_comments",
-        "num_ratings",
-        "upload_day",
-        "upload_month",
-        "upload_year",
-        "video_rating",
-        "views"
+    # Map the expected flat column names to their actual nested paths in Mongo
+    column_map = {
+        "age_days": "video_desc.age_days",
+        "length_seconds": "video_attri.length",
+        "num_comments": "video_engagement.num_comments",
+        "num_ratings": "video_engagement.num_ratings",
+        "upload_day": "upload_day",
+        "upload_month": "upload_month",
+        "upload_year": "upload_year",
+        "video_rating": "video_attri.rating",
+        "views": "video_engagement.views"
+    }
+
+    # Cast each nested field into a flat double column
+    double_columns = [
+        col(path).cast("double").alias(name)
+        for name, path in column_map.items()
     ]
 
-    # list of instructions to cast numeric columns in spark to double types
-    double_columns = [col(c).cast("double").alias(c) for c in numeric_cols]
-
-    # create a new data frame with just numeric columns
-    df_num = df.select(*double_columns)
-
-    # remove any empty rows
-    df_num = df_num.dropna()
+    # Select and clean numeric data
+    df_num = df.select(*double_columns).dropna()
 
     return df_num
+
 
 # computes the correlation of the numeric data frame and returns a list of correlations
 
@@ -107,8 +108,11 @@ def save_to_mongo(correlation, args):
     db = client["youtube_analysis"]
     collection = db["correlations"]
 
-    # remove old correlation data
-    collection.drop()
+    # remove old correlation data - MUST be literal string
+    try:
+        db.command({"drop": "correlations"})
+    except Exception as e:
+        print("Drop error (safe to ignore if collection doesn't exist):", e)
 
     # turn correlation data into a mongo format
     documents = []
@@ -153,19 +157,19 @@ def main(args):
         SparkSession.builder
         .appName("CorrelationAnalysis")
         .master(master)
-        .config("spark.executor.cores", executor_cores)
-        .config("spark.executor.memory", "6g")
-        .config("spark.driver.memory", "6g")
-        .config("spark.sql.shuffle.partitions", "4")
         .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
-        .config("spark.mongodb.read.connection.uri", f"{args.mongo_uri}/youtube_analysis")
-        .config("spark.mongodb.write.connection.uri", f"{args.mongo_uri}/youtube_analysis")
-
+        .config("spark.mongodb.connection.uri", "mongodb://db:27017")
         .getOrCreate()
     )
 
     # load data
     df = load_mongo_data(spark)
+
+    from pyspark.sql.functions import dayofmonth, month, year
+
+    df = df.withColumn("upload_day", dayofmonth("upload_date")) \
+        .withColumn("upload_month", month("upload_date")) \
+        .withColumn("upload_year", year("upload_date"))
 
     # numeric df
     df_num = numeric_df(df)

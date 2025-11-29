@@ -92,7 +92,7 @@ class TrendingVideoPredictor:
             "new_video_engagement_bonus",
             func.when(
                 (func.col("age_days") > 710)  # relatively new video
-                & (func.col("engagement_density") > 0.01),  # Ggod engagement rate
+                & (func.col("engagement_density") > 0.01),  # Good engagement rate
                 2,  # bonus
             ).otherwise(1.0),
         )
@@ -256,6 +256,17 @@ class TrendingVideoPredictor:
         return final_rankings
 
 
+def write_to_mongodb(df, collection_name="trendCollection") -> None:
+    """Write DataFrame to MongoDB collection."""
+    print(f"Writing results to MongoDB collection: {collection_name}")
+
+    df.write.format("mongodb").mode("overwrite").option("database", "youtube_analysis").option(
+        "collection", collection_name
+    ).save()
+
+    print(f"Successfully wrote {df.count()} records to {collection_name}")
+
+
 def main() -> None:
     """Script entry point."""
     spark = new_spark_session("trending_predictor")
@@ -287,6 +298,7 @@ def main() -> None:
         "age_days",
         "category_rank",
     ).show(20, truncate=False)
+    write_to_mongodb(results, "trendCollection")
 
     spark.stop()
 

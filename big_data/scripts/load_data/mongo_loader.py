@@ -21,7 +21,7 @@ class MongoDBLoader:
     # change uri if needed
     def __init__(
         self,
-        connection_uri: str = "mongodb://localhost:27018/",
+        connection_uri: str = "mongodb://localhost:27017/",
         db_name: str = "youtube_analysis",
     ):
         """Construct db hookup."""
@@ -48,6 +48,12 @@ class MongoDBLoader:
     def create_indexes(self) -> None:
         """Lookup indexes."""
         # fast lookup indexes, kinda cool
+        try:
+            self.collection.drop_indexes()
+            print("Dropped existing indexes")
+        except Exception as e:
+            print(f"Error dropping indexes: {e}")
+        
         self.collection.create_index(
             [("upload_date", 1), ("id", 1)],
             unique=True,

@@ -1,5 +1,10 @@
 """pyspark.ml trending video predictor."""
 
+import argparse
+
+import pandas
+import pymongo
+import scripts.analysis._cluster as _cluster
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import StandardScaler, VectorAssembler
 from pyspark.sql import SparkSession, Window
@@ -271,8 +276,50 @@ def write_to_mongodb(df, collection_name="trendCollection") -> None:
     print(f"Successfully wrote {df.count()} records to {collection_name}")
 
 
-def main() -> str:
+def write_to_txt_file(output_str, file_path="text_outputs/trend_output.txt") -> None:
+    """Write output string to a text file."""
+    with open(file_path, "w") as file:
+        file.write(output_str)
+    print(f"Results written to {file_path}")
+
+
+def main():
     """Script entry point."""
+    parser = argparse.ArgumentParser(
+        prog="Trend algorithm script",
+        description="calculate trending video scores",
+    )
+    parser.add_argument(
+        "--use-cluster",
+        action="store_true",
+        help="submit job to pyspark cluster for processing",
+        default=False,
+    )
+    parser.add_argument(
+        "--view-results",
+        action="store_true",
+        help="query mongodb container for query results",
+        default=False,
+    )
+    args = parser.parse_args()
+
+    if args.use_cluster:
+        # pass script to spark cluster and let it do the work before exiting
+        # script = pathlib.Path("big_data/scripts/analysis/trending_predictor.py")
+        mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
+        _cluster.spark_submit("trending_predictor.py", mongo_conn)
+        return
+    if args.view_results:
+        mongo = pymongo.MongoClient("localhost", 27017)
+        trends = mongo["youtube_analysis"].get_collection("trendCollection")
+        df = pandas.DataFrame(list(trends.find()))
+        output_lines = []
+        output_lines.append("Top Trending Videos from MongoDB:\n")
+        output_lines.append(df.head(20).to_string())
+        output_str = "\n".join(output_lines)
+        write_to_txt_file(output_str)
+        return
+
     spark = new_spark_session("trending_predictor")
 
     # fmt: off
@@ -320,8 +367,9 @@ def main() -> str:
     write_to_mongodb(results, "trendCollection")
 
     spark.stop()
-
-    return "\n".join(output_lines)
+    output_str = "\n".join(output_lines)
+    write_to_txt_file(output_str)
+    return
 
 
 if __name__ == "__main__":

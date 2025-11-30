@@ -1,9 +1,10 @@
-from pyspark.sql.functions import col, dayofmonth, month, year
-from pyspark.sql import SparkSession
-from pyspark.ml.stat import Correlation
-from pyspark.ml.feature import VectorAssembler
-from pymongo import MongoClient
 import argparse
+
+from pymongo import MongoClient
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.stat import Correlation
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, dayofmonth, month, year
 from scripts.analysis._cluster import spark_submit
 
 
@@ -11,21 +12,14 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", type=str, default="local")
     parser.add_argument("--workers", type=int, default=2)
-    parser.add_argument("--mongo-uri", type=str,
-                        default="mongodb://localhost:27017")
+    parser.add_argument("--mongo-uri", type=str, default="mongodb://localhost:27017")
     parser.add_argument("--trial-id", type=int, default=0)
     parser.add_argument("--use-cluster", action="store_true")
     return parser.parse_args()
 
 
 def load_mongo_data(spark):
-    df = (
-        spark.read
-        .format("mongodb")
-        .option("database", "youtube_analysis")
-        .option("collection", "videos")
-        .load()
-    )
+    df = spark.read.format("mongodb").option("database", "youtube_analysis").option("collection", "videos").load()
 
     return df.select(
         col("video_desc.age_days").alias("age_days"),
@@ -34,7 +28,7 @@ def load_mongo_data(spark):
         col("video_engagement.views").alias("views"),
         col("video_engagement.num_ratings").alias("num_ratings"),
         col("video_engagement.num_comments").alias("num_comments"),
-        col("upload_date")
+        col("upload_date"),
     )
 
 
@@ -56,14 +50,12 @@ def compute_correlation(df):
     numeric_cols = df.columns
     assembler = VectorAssembler(inputCols=numeric_cols, outputCol="features")
     vector_df = assembler.transform(df).select("features")
-    corr_matrix = Correlation.corr(
-        vector_df, "features", "pearson").head()[0].toArray()
+    corr_matrix = Correlation.corr(vector_df, "features", "pearson").head()[0].toArray()
 
     correlation = []
     for i in range(len(numeric_cols)):
         for j in range(i + 1, len(numeric_cols)):
-            correlation.append(
-                (numeric_cols[i], numeric_cols[j], round(corr_matrix[i][j], 4)))
+            correlation.append((numeric_cols[i], numeric_cols[j], round(corr_matrix[i][j], 4)))
     return correlation
 
 
@@ -86,13 +78,7 @@ def save_to_mongo(correlation, args):
         else:
             category = "Near_Zero"
 
-        docs.append({
-            "col1": col1,
-            "col2": col2,
-            "value": value,
-            "category": category,
-            "trial_id": args.trial_id
-        })
+        docs.append({"col1": col1, "col2": col2, "value": value, "category": category, "trial_id": args.trial_id})
 
     if docs:
         collection.insert_many(docs)
@@ -100,13 +86,13 @@ def save_to_mongo(correlation, args):
 
 def run_local(args):
     import time
+
     start = time.time()
 
     master = "spark://master:7077" if args.mode == "cluster" else "local[*]"
 
     spark = (
-        SparkSession.builder
-        .appName("CorrelationAnalysis")
+        SparkSession.builder.appName("CorrelationAnalysis")
         .master(master)
         .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
         .config("spark.mongodb.connection.uri", "mongodb://db:27017")
@@ -114,9 +100,11 @@ def run_local(args):
     )
 
     df = load_mongo_data(spark)
-    df = df.withColumn("upload_day", dayofmonth("upload_date")) \
-           .withColumn("upload_month", month("upload_date")) \
-           .withColumn("upload_year", year("upload_date"))
+    df = (
+        df.withColumn("upload_day", dayofmonth("upload_date"))
+        .withColumn("upload_month", month("upload_date"))
+        .withColumn("upload_year", year("upload_date"))
+    )
 
     df_num = numeric_df(df)
     correlation = compute_correlation(df_num)
@@ -147,10 +135,7 @@ def entrypoint():
     args = parse_args()
 
     if args.use_cluster:
-        spark_submit(
-            "correlation_analysis.py",
-            "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
-        )
+        spark_submit("correlation_analysis.py", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
         return
 
     run_local(args)

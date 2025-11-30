@@ -38,6 +38,7 @@ analyze_links = "scripts.analysis.analyze_links:main"
 graph_filter = "scripts.analysis.graph_filter:main"
 trending_predictor = "scripts.analysis.trending_predictor:main"
 correlation_analysis = "big_data.scripts.analysis.correlation_analysis:entrypoint"
+gui = "scripts.GUI:main"
 
 [tool.setuptools.packages.find]
 where = ["big_data"]

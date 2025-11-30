@@ -1,0 +1,434 @@
+Records loaded: 811829
+
+================================================================================
+STATS FOR TOP VIDEOS
+================================================================================
+
+Feature Weights: {'recency_boost': 20, 'views_velocity': 15, 'engagement_density': 3, 'rating_quality': 25, 'length_score': 1}
+
+Top Videos Feature Analysis:
+--------------------------------------------------------------------------------
+
+#1: nicepaul - Entertainment
+Video ID: tScm-eZInBE
+Age Days: 720 | Views: 2,675,254 | Rating: 4.65
+Ratings: 9,105 | Comments: 5,974
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.656                   (weight: 15)
+  - Engagement Density: 0.954394                 (weight: 3)
+  - Rating Quality: 4.239 (weight: 25)
+  - Length Score: 0.7 (weight: 1)
+  - Rating Confidence: 0.912
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 413.380
+  - Final Trending Score: 826.760
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#2: mwesch - Howto & DIY
+Video ID: 6gmP4nk0EOE
+Age Days: 715 | Views: 1,353,059 | Rating: 4.76
+Ratings: 10,757 | Comments: 3,640
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.094                   (weight: 15)
+  - Engagement Density: 0.952316                 (weight: 3)
+  - Rating Quality: 4.419 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.928
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 408.744
+  - Final Trending Score: 817.487
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#3: vlogkarate - Comedy
+Video ID: C0f2dHJ6A18
+Age Days: 721 | Views: 1,510,728 | Rating: 4.4
+Ratings: 7,565 | Comments: 3,502
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.258                   (weight: 15)
+  - Engagement Density: 0.726748                 (weight: 3)
+  - Rating Quality: 3.930 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.893
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 399.503
+  - Final Trending Score: 799.006
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#4: Philinthecircle - Film & Animation
+Video ID: zRVts7TFw-Y
+Age Days: 716 | Views: 607,456 | Rating: 4.79
+Ratings: 5,711 | Comments: 3,866
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.535                   (weight: 15)
+  - Engagement Density: 0.668923                 (weight: 3)
+  - Rating Quality: 4.144 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.865
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 392.819
+  - Final Trending Score: 785.639
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#5: ConfessionsTour06 - Music
+Video ID: OMndH4egfSk
+Age Days: 724 | Views: 1,258,781 | Rating: 4.59
+Ratings: 3,123 | Comments: 1,616
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.169                   (weight: 15)
+  - Engagement Density: 0.314975                 (weight: 3)
+  - Rating Quality: 3.694 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.805
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 391.619
+  - Final Trending Score: 783.237
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#6: Zebro - News & Politics
+Video ID: 4G-D0F4Q9yk
+Age Days: 716 | Views: 882,123 | Rating: 4.33
+Ratings: 6,538 | Comments: 5,051
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.802                   (weight: 15)
+  - Engagement Density: 0.788899                 (weight: 3)
+  - Rating Quality: 3.804 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.879
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 388.702
+  - Final Trending Score: 777.403
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#7: CocaColaSuperbowl - Gadgets & Games
+Video ID: 7wt5FiZQrgM
+Age Days: 716 | Views: 1,399,531 | Rating: 4.31
+Ratings: 4,580 | Comments: 827
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.133                   (weight: 15)
+  - Engagement Density: 0.356859                 (weight: 3)
+  - Rating Quality: 3.633 (weight: 25)
+  - Length Score: 0.7 (weight: 1)
+  - Rating Confidence: 0.843
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 387.789
+  - Final Trending Score: 775.578
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#8: dailybean - News & Politics
+Video ID: zx2ytr2Oyv4
+Age Days: 716 | Views: 647,446 | Rating: 4.74
+Ratings: 3,882 | Comments: 2,270
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.581                   (weight: 15)
+  - Engagement Density: 0.427793                 (weight: 3)
+  - Rating Quality: 3.917 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.826
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 387.126
+  - Final Trending Score: 774.252
+  - Category Rank: #2
+--------------------------------------------------------------------------------
+
+#9: BrookeHNet - Entertainment
+Video ID: 0cTkMzQ7Zf0
+Age Days: 720 | Views: 1,105,147 | Rating: 4.62
+Ratings: 2,602 | Comments: 1,556
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.019                   (weight: 15)
+  - Engagement Density: 0.278771                 (weight: 3)
+  - Rating Quality: 3.633 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.786
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 386.958
+  - Final Trending Score: 773.915
+  - Category Rank: #2
+--------------------------------------------------------------------------------
+
+#10: jgrandin1 - Entertainment
+Video ID: Qehxjub5lyo
+Age Days: 715 | Views: 944,984 | Rating: 4.5
+Ratings: 3,641 | Comments: 1,943
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.838                   (weight: 15)
+  - Engagement Density: 0.378347                 (weight: 3)
+  - Rating Quality: 3.690 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.820
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 384.953
+  - Final Trending Score: 769.905
+  - Category Rank: #3
+--------------------------------------------------------------------------------
+
+#11: spaceship - Entertainment
+Video ID: IsyWlcQAy-Q
+Age Days: 731 | Views: 2,486,628 | Rating: 4.02
+Ratings: 1,807 | Comments: 2,805
+
+Raw Video Stats:
+  - Recency Boost: 7.3                  (weight: 20)
+  - Views Velocity: 10.765                   (weight: 15)
+  - Engagement Density: 0.293264                 (weight: 3)
+  - Rating Quality: 3.015 (weight: 25)
+  - Length Score: 0.7 (weight: 1)
+  - Rating Confidence: 0.750
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 384.630
+  - Final Trending Score: 769.260
+  - Category Rank: #4
+--------------------------------------------------------------------------------
+
+#12: adultswimdotcom - Comedy
+Video ID: tM1WzRzEZ5U
+Age Days: 717 | Views: 721,419 | Rating: 4.75
+Ratings: 2,574 | Comments: 1,065
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.672                   (weight: 15)
+  - Engagement Density: 0.251156                 (weight: 3)
+  - Rating Quality: 3.730 (weight: 25)
+  - Length Score: 0.7 (weight: 1)
+  - Rating Confidence: 0.785
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 383.189
+  - Final Trending Score: 766.378
+  - Category Rank: #2
+--------------------------------------------------------------------------------
+
+#13: BrookeHNet - Entertainment
+Video ID: S2n1_h3Bvt0
+Age Days: 724 | Views: 1,271,990 | Rating: 4.25
+Ratings: 2,418 | Comments: 1,399
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 10.177                   (weight: 15)
+  - Engagement Density: 0.253519                 (weight: 3)
+  - Rating Quality: 3.311 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.779
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 381.990
+  - Final Trending Score: 763.981
+  - Category Rank: #5
+--------------------------------------------------------------------------------
+
+#14: smosh - Comedy
+Video ID: 5q5uoEU8RRk
+Age Days: 718 | Views: 376,928 | Rating: 4.46
+Ratings: 5,847 | Comments: 3,384
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.219                   (weight: 15)
+  - Engagement Density: 0.666989                 (weight: 3)
+  - Rating Quality: 3.869 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.867
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 381.599
+  - Final Trending Score: 763.198
+  - Category Rank: #3
+--------------------------------------------------------------------------------
+
+#15: burnellyow - Pets & Animals
+Video ID: TZ860P4iTaM
+Age Days: 712 | Views: 913,436 | Rating: 4.72
+Ratings: 2,195 | Comments: 755
+
+Raw Video Stats:
+  - Recency Boost: 7.1                  (weight: 20)
+  - Views Velocity: 9.772                   (weight: 15)
+  - Engagement Density: 0.200340                 (weight: 3)
+  - Rating Quality: 3.632 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.769
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 381.378
+  - Final Trending Score: 762.755
+  - Category Rank: #1
+--------------------------------------------------------------------------------
+
+#16: current - News & Politics
+Video ID: qHO8l-Bd1O4
+Age Days: 728 | Views: 425,284 | Rating: 4.66
+Ratings: 2,722 | Comments: 638
+
+Raw Video Stats:
+  - Recency Boost: 7.3                  (weight: 20)
+  - Views Velocity: 9.435                   (weight: 15)
+  - Engagement Density: 0.240679                 (weight: 3)
+  - Rating Quality: 3.686 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.791
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 380.996
+  - Final Trending Score: 761.993
+  - Category Rank: #3
+--------------------------------------------------------------------------------
+
+#17: IslandofMystery - Entertainment
+Video ID: OL50ddCSJmo
+Age Days: 734 | Views: 463,706 | Rating: 4.75
+Ratings: 1,797 | Comments: 964
+
+Raw Video Stats:
+  - Recency Boost: 7.3                  (weight: 20)
+  - Views Velocity: 9.577                   (weight: 15)
+  - Engagement Density: 0.196554                 (weight: 3)
+  - Rating Quality: 3.560 (weight: 25)
+  - Length Score: 0.7 (weight: 1)
+  - Rating Confidence: 0.749
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 380.734
+  - Final Trending Score: 761.467
+  - Category Rank: #6
+--------------------------------------------------------------------------------
+
+#18: yui2006xp - Film & Animation
+Video ID: HVZsSQZ010A
+Age Days: 730 | Views: 451,336 | Rating: 4.76
+Ratings: 1,858 | Comments: 1,136
+
+Raw Video Stats:
+  - Recency Boost: 7.3                  (weight: 20)
+  - Views Velocity: 9.505                   (weight: 15)
+  - Engagement Density: 0.213553                 (weight: 3)
+  - Rating Quality: 3.583 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.753
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 379.790
+  - Final Trending Score: 759.580
+  - Category Rank: #2
+--------------------------------------------------------------------------------
+
+#19: adultswimdotcom - Comedy
+Video ID: F6EPjnQEZWs
+Age Days: 716 | Views: 733,313 | Rating: 4.68
+Ratings: 1,953 | Comments: 1,128
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.670                   (weight: 15)
+  - Engagement Density: 0.212405                 (weight: 3)
+  - Rating Quality: 3.546 (weight: 25)
+  - Length Score: 1.0 (weight: 1)
+  - Rating Confidence: 0.758
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 378.543
+  - Final Trending Score: 757.086
+  - Category Rank: #4
+--------------------------------------------------------------------------------
+
+#20: AcesVsKings - Comedy
+Video ID: OaJXE4wojTk
+Age Days: 722 | Views: 529,669 | Rating: 4.63
+Ratings: 2,172 | Comments: 1,046
+
+Raw Video Stats:
+  - Recency Boost: 7.2                  (weight: 20)
+  - Views Velocity: 9.516                   (weight: 15)
+  - Engagement Density: 0.226939                 (weight: 3)
+  - Rating Quality: 3.558 (weight: 25)
+  - Length Score: 0.3 (weight: 1)
+  - Rating Confidence: 0.768
+  - New Video Engagement Bonus: 2.0 (APPLIED)
+
+Final Scores:
+  - Scaled Base Trending Score: 377.061
+  - Final Trending Score: 754.122
+  - Category Rank: #5
+--------------------------------------------------------------------------------
+
+=== TOP 20 TRENDING VIDEOS ===
+ID              Uploader             Category        Trend Score           Views        Age Days   Cat Rank
+-----------------------------------------------------------------------------------------------------------
+tScm-eZInBE     nicepaul             Entertainment               826.760      2675254      720        1
+6gmP4nk0EOE     mwesch               Howto & DIY                 817.487      1353059      715        1
+C0f2dHJ6A18     vlogkarate           Comedy                      799.006      1510728      721        1
+zRVts7TFw-Y     Philinthecircle      Film & Animation             785.639      607456       716        1
+OMndH4egfSk     ConfessionsTour06    Music                       783.237      1258781      724        1
+4G-D0F4Q9yk     Zebro                News & Politics             777.403      882123       716        1
+7wt5FiZQrgM     CocaColaSuperbowl    Gadgets & Games             775.578      1399531      716        1
+zx2ytr2Oyv4     dailybean            News & Politics             774.252      647446       716        2
+0cTkMzQ7Zf0     BrookeHNet           Entertainment               773.915      1105147      720        2
+Qehxjub5lyo     jgrandin1            Entertainment               769.905      944984       715        3
+IsyWlcQAy-Q     spaceship            Entertainment               769.260      2486628      731        4
+tM1WzRzEZ5U     adultswimdotcom      Comedy                      766.378      721419       717        2
+S2n1_h3Bvt0     BrookeHNet           Entertainment               763.981      1271990      724        5
+5q5uoEU8RRk     smosh                Comedy                      763.198      376928       718        3
+TZ860P4iTaM     burnellyow           Pets & Animals              762.755      913436       712        1
+qHO8l-Bd1O4     current              News & Politics             761.993      425284       728        3
+OL50ddCSJmo     IslandofMystery      Entertainment               761.467      463706       734        6
+HVZsSQZ010A     yui2006xp            Film & Animation             759.580      451336       730        2
+F6EPjnQEZWs     adultswimdotcom      Comedy                      757.086      733313       716        4
+OaJXE4wojTk     AcesVsKings          Comedy                      754.122      529669       722        5

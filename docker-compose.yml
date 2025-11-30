@@ -21,7 +21,7 @@ services:
     environment:
       - SPARK_MASTER_URL=spark://master:7077
       - SPARK_WORKER_CORES=1    # assume 1 core
-      - SPARK_WORKER_MEMORY=1G  # and 1Gb of RAM
+      - SPARK_WORKER_MEMORY=4G  # and 1Gb of RAM
       - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
     volumes:
       - spark-events:/opt/spark/spark-events

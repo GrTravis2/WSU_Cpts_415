@@ -9,6 +9,7 @@ requires-python = ">= 3.11"
 authors = [ # put your name, email here!
     {name = "Gavin Travis", email = "gavin.travis@wsu.edu"},
     {name = "Dylan Kopitzke", email = "dylan.kopitzke@wsu.edu"},
+    {name = "Travis Bolster", email = "travis.bolster@wsu.edu"},
 ]
 dependencies = [
     "pymongo >= 4.0.0",
@@ -34,6 +35,7 @@ load_data_mongo = "scripts.load_data.mongo_loader:main"
 analyze_links = "scripts.analysis.analyze_links:main"
 graph_filter = "scripts.analysis.graph_filter:main"
 trending_predictor = "scripts.analysis.trending_predictor:main"
+correlation_analysis = "big_data.scripts.analysis.correlation_analysis:entrypoint"
 
 [tool.setuptools.packages.find]
 where = ["big_data"]

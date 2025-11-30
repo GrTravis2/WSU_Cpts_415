@@ -17,7 +17,9 @@ dependencies = [
     "graphframes-py == 0.10.0",
     "pandas",
     "matplotlib",
-    "setuptools" # needed for legacy 'diskutils' during pyspark -> pandas conversion
+    "setuptools", # needed for legacy 'diskutils' during pyspark -> pandas conversion
+    "Pillow", #used for tkniter images
+    "numpy", #also images
 ]
 
 [project.optional-dependencies]

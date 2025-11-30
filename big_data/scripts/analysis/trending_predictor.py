@@ -4,7 +4,6 @@ from pyspark.ml import Pipeline
 from pyspark.ml.feature import StandardScaler, VectorAssembler
 from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as func
-from pyspark.sql.types import DoubleType
 
 
 def new_spark_session(app_name: str, host: str = "localhost") -> SparkSession:
@@ -135,20 +134,20 @@ class TrendingVideoPredictor:
 
     def calculate_trending_score(self, df):
         """Calculate final trending score using ml results."""
+        # Calculate base score directly from the original features
+        # Since StandardScaler standardizes the features, we can work with the raw features
+        # and apply the standardization formula manually if needed, but for simplicity:
 
-        def compute_weighted_score(scaled_features):
-            # Manual weighted sum
-            return float(
-                scaled_features[0] * self.weights["recency_boost"]
-                + scaled_features[1] * self.weights["views_velocity"]
-                + scaled_features[2] * self.weights["engagement_density"]
-                + scaled_features[3] * self.weights["rating_quality"]
-                + scaled_features[5] * self.weights["length_score"]
-            )
+        # Use the original raw features before scaling (they're still in the dataframe)
+        df_with_base = df.withColumn(
+            "base_trending_score",
+            func.col("recency_boost") * self.weights["recency_boost"]
+            + func.col("views_velocity") * self.weights["views_velocity"]
+            + func.col("engagement_density") * self.weights["engagement_density"]
+            + func.col("rating_quality") * self.weights["rating_quality"]
+            + func.col("length_score") * self.weights["length_score"],
+        )
 
-        weighted_score = func.udf(compute_weighted_score, DoubleType())
-        print("Calculating weighted trending scores...")
-        df_with_base = df.withColumn("base_trending_score", weighted_score(func.col("scaled_features")))
         scored_df = df_with_base.withColumn(
             "trending_score", func.col("base_trending_score") * func.col("new_video_engagement_bonus")
         )
@@ -157,7 +156,6 @@ class TrendingVideoPredictor:
 
     def get_trending_rankings(self, df, top_n=50):
         """Get final trending rankings with insights."""
-        # Window for category-wise ranking
         category_window = Window.partitionBy("category").orderBy(func.desc("trending_score"))
         global_window = Window.orderBy(func.desc("trending_score"))
 
@@ -185,52 +183,58 @@ class TrendingVideoPredictor:
 
         return ranked_df
 
-    def print_feature_breakdown(self, df, limit=15):
-        """Stats for top20."""
-        print("\n" + "=" * 80)
-        print("STATS FOR TOP VIDEOS")
-        print("=" * 80)
+    def print_feature_breakdown(self, df, limit=20):
+        """Return stats for top videos as string."""
+        output = []
+        output.append("\n" + "=" * 80)
+        output.append("STATS FOR TOP VIDEOS")
+        output.append("=" * 80)
 
         top_videos = df.orderBy(func.desc("trending_score")).limit(limit).collect()
 
-        print(f"\nFeature Weights: {self.weights}")
-        print("\nTop Videos Feature Analysis:")
-        print("-" * 80)
+        output.append(f"\nFeature Weights: {self.weights}")
+        output.append("\nTop Videos Feature Analysis:")
+        output.append("-" * 80)
 
         for i, video in enumerate(top_videos, 1):
-            print(f"\n#{i}: {video['uploader_name']} - {video['category']}")
-            print(f"Video ID: {video['id']}")
-            print(f"Age Days: {video['age_days']} | Views: {video['views']:,} | Rating: {video['video_rating']}")
-            print(f"Ratings: {video['num_ratings']:,} | Comments: {video['num_comments']:,}")
+            output.append(f"\n#{i}: {video['uploader_name']} - {video['category']}")
+            output.append(f"Video ID: {video['id']}")
+            output.append(
+                f"Age Days: {video['age_days']} | Views: {video['views']:,} | Rating: {video['video_rating']}"
+            )
+            output.append(f"Ratings: {video['num_ratings']:,} | Comments: {video['num_comments']:,}")
 
             # stats
-            print("\nRaw Video Stats:")
-            print(
-                f"  • Recency Boost: {video['recency_boost']:.1f} \
+            output.append("\nRaw Video Stats:")
+            output.append(
+                f"  - Recency Boost: {video['recency_boost']:.1f} \
                  (weight: {self.weights['recency_boost']})"
             )
-            print(
-                f"  • Views Velocity: {video['views_velocity']:.3f} \
+            output.append(
+                f"  - Views Velocity: {video['views_velocity']:.3f} \
                   (weight: {self.weights['views_velocity']})"
             )
-            print(
-                f"  • Engagement Density: {video['engagement_density']:.6f} \
+            output.append(
+                f"  - Engagement Density: {video['engagement_density']:.6f} \
                 (weight: {self.weights['engagement_density']})"
             )
-            print(f"  • Rating Quality: {video['rating_quality']:.3f} (weight: {self.weights['rating_quality']})")
-            print(f"  • Length Score: {video['length_score']:.1f} (weight: {self.weights['length_score']})")
-            print(f"  • Rating Confidence: {video['rating_confidence']:.3f}")
+            output.append(
+                f"  - Rating Quality: {video['rating_quality']:.3f} (weight: {self.weights['rating_quality']})"
+            )
+            output.append(f"  - Length Score: {video['length_score']:.1f} (weight: {self.weights['length_score']})")
+            output.append(f"  - Rating Confidence: {video['rating_confidence']:.3f}")
 
             # hot bonus
             bonus_text = "APPLIED" if video["new_video_engagement_bonus"] > 1.0 else "not applied"
-            print(f"  • New Video Engagement Bonus: {video['new_video_engagement_bonus']} ({bonus_text})")
-
+            output.append(f"  - New Video Engagement Bonus: {video['new_video_engagement_bonus']} ({bonus_text})")
             # output final scores
-            print("\nFinal Scores:")
-            print(f"  • Scaled Base Trending Score: {video['base_trending_score']:.3f}")
-            print(f"  • Final Trending Score: {video['trending_score']:.3f}")
-            print(f"  • Category Rank: #{video['category_rank']}")
-            print("-" * 80)
+            output.append("\nFinal Scores:")
+            output.append(f"  - Scaled Base Trending Score: {video['base_trending_score']:.3f}")
+            output.append(f"  - Final Trending Score: {video['trending_score']:.3f}")
+            output.append(f"  - Category Rank: #{video['category_rank']}")
+            output.append("-" * 80)
+
+        return "\n".join(output)
 
     def run_analysis(self, df):
         """Run trending analysis pipeline."""
@@ -267,7 +271,7 @@ def write_to_mongodb(df, collection_name="trendCollection") -> None:
     print(f"Successfully wrote {df.count()} records to {collection_name}")
 
 
-def main() -> None:
+def main() -> str:
     """Script entry point."""
     spark = new_spark_session("trending_predictor")
 
@@ -280,27 +284,44 @@ def main() -> None:
     )
     # fmt: on
 
-    print(f"Records loaded: {df.count()}")
+    output_lines = []
+    output_lines.append(f"Records loaded: {df.count()}")
 
     # run predictor
     predictor = TrendingVideoPredictor()
     results = predictor.run_analysis(df)
 
-    predictor.print_feature_breakdown(results, limit=20)
+    output_lines.append(predictor.print_feature_breakdown(results, limit=20))
 
-    print("\n=== TOP 20 TRENDING VIDEOS ===")
-    results.orderBy(func.desc("trending_score")).select(
-        "id",
-        "uploader_name",
-        "category",
-        "trending_score",
-        "views",
-        "age_days",
-        "category_rank",
-    ).show(20, truncate=False)
+    output_lines.append("\n=== TOP 20 TRENDING VIDEOS ===")
+    top20 = (
+        results.orderBy(func.desc("trending_score"))
+        .select(
+            "id",
+            "uploader_name",
+            "category",
+            "trending_score",
+            "views",
+            "age_days",
+            "category_rank",
+        )
+        .limit(20)
+        .collect()
+    )
+    header = f"{'ID':<15} {'Uploader':<20} {'Category':<15} {'Trend Score':<12}\
+          {'Views':<12} {'Age Days':<10} {'Cat Rank':<8}"
+    output_lines.append(header)
+    output_lines.append("-" * len(header))
+
+    for row in top20:
+        line = f"{row['id']:<15} {row['uploader_name']:<20} {row['category']:<15} \
+            {row['trending_score']:<12.3f} {row['views']:<12} {row['age_days']:<10} {row['category_rank']:<8}"
+        output_lines.append(line)
     write_to_mongodb(results, "trendCollection")
 
     spark.stop()
+
+    return "\n".join(output_lines)
 
 
 if __name__ == "__main__":

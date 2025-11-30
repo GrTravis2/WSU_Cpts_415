@@ -21,7 +21,7 @@ class MongoDBLoader:
     # change uri if needed
     def __init__(
         self,
-        connection_uri: str = "mongodb://localhost:27017/",
+        connection_uri: str = "mongodb://localhost:27018/",
         db_name: str = "youtube_analysis",
     ):
         """Construct db hookup."""

@@ -73,8 +73,8 @@ def plot_image(df: pandas.DataFrame) -> None:
 def main() -> None:
     """Script entry point."""
     parser = argparse.ArgumentParser(
-        prog="Link reference analysis.",
-        description="Link reference analysis.",
+        prog="YouTube data loader",
+        description="loads YT data from text w/ predetermined schema",
     )
     parser.add_argument(
         "--use-cluster",
@@ -92,6 +92,7 @@ def main() -> None:
 
     if args.use_cluster:
         # pass script to spark cluster and let it do the work before exiting
+        # script = pathlib.Path("big_data/scripts/analysis/analyze_links.py")
         mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
         _cluster.spark_submit("analyze_links.py", mongo_conn)
         return
@@ -150,8 +151,6 @@ def main() -> None:
         .option("collection", "analyze_links")
         .save()
     )
-
-    spark.stop()
 
 
 if __name__ == "__main__":

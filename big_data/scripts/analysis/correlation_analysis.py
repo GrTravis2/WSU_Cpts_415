@@ -11,8 +11,8 @@ from scripts.analysis._cluster import spark_submit
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", type=str, default="local")
-    # parser.add_argument("--workers", type=int, default=2)
-    parser.add_argument("--mongo-uri", type=str, default="mongodb://db:27017")
+    parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--mongo-uri", type=str, default="mongodb://localhost:27017")
     parser.add_argument("--trial-id", type=int, default=0)
     parser.add_argument("--use-cluster", action="store_true")
     return parser.parse_args()
@@ -90,15 +90,12 @@ def run_local(args):
     start = time.time()
 
     master = "spark://master:7077" if args.mode == "cluster" else "local[*]"
-    mongo_read_uri = "mongodb://db:27017/youtube_analysis.videos"
-    mongo_write_uri = "mongodb://db:27017/youtube_analysis.analyze_links"
 
     spark = (
         SparkSession.builder.appName("CorrelationAnalysis")
         .master(master)
         .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
-        .config("spark.mongodb.read.connection.uri", mongo_read_uri)
-        .config("spark.mongodb.write.connection.uri", mongo_write_uri)
+        .config("spark.mongodb.connection.uri", "mongodb://db:27017")
         .getOrCreate()
     )
 

@@ -1,23 +1,18 @@
 """pyspark.ml trending video predictor."""
 
-import argparse
-
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import StandardScaler, VectorAssembler
 from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as func
-from scripts.analysis import _cluster
 
 
-def new_spark_session(app_name: str, host: str = "localhost", db_host: str = "localhost") -> SparkSession:
+def new_spark_session(app_name: str, host: str = "localhost") -> SparkSession:
     """Create connection to mongodb using sparkSession object."""
-    mongo_read_uri = f"mongodb://{db_host}/youtube_analysis.videos"
-    mongo_write_uri = f"mongodb://{db_host}/youtube_analysis.trendCollection"
+    mongo_uri = "mongodb://127.0.0.1/youtube_analysis.videos"
     mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
     spark: SparkSession = (  # init connection stuff
         SparkSession.builder.config("spark.driver.host", host)  # type: ignore
-        .config("spark.mongodb.read.connection.uri", mongo_read_uri)
-        .config("spark.mongodb.write.connection.uri", mongo_write_uri)
+        .config("spark.mongodb.read.connection.uri", mongo_uri)
         .config("spark.jars.packages", mongo_conn)
         .master("local")
         .appName(app_name)
@@ -276,36 +271,9 @@ def write_to_mongodb(df, collection_name="trendCollection") -> None:
     print(f"Successfully wrote {df.count()} records to {collection_name}")
 
 
-def main() -> None:
+def main() -> str:
     """Script entry point."""
-    parser = argparse.ArgumentParser(
-        prog="Link reference analysis.",
-        description="Link reference analysis.",
-    )
-    parser.add_argument(
-        "--use-cluster",
-        action="store_true",
-        help="submit job to pyspark cluster for processing",
-        default=False,
-    )
-    parser.add_argument(
-        "--view-results",
-        action="store_true",
-        help="query mongodb container for query results",
-        default=False,
-    )
-    args = parser.parse_args()
-
-    if args.use_cluster:
-        # pass script to spark cluster and let it do the work before exiting
-        mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
-        _cluster.spark_submit("trending_predictor.py", mongo_conn)
-        return
-
-    if args.view_results:
-        """Do whatever algo output here"""
-        return
-    spark = new_spark_session("trending_predictor", db_host="db:27017")
+    spark = new_spark_session("trending_predictor")
 
     # fmt: off
     df = (
@@ -353,7 +321,7 @@ def main() -> None:
 
     spark.stop()
 
-    # return "\n".join(output_lines)
+    return "\n".join(output_lines)
 
 
 if __name__ == "__main__":

@@ -73,7 +73,7 @@ class AlgorithmGUI:
 
         match algorithm_num:
             case 1:  # trending predictor
-                self.textbox.insert(tk.END, trending_predictor.main() or "")
+                self.textbox.insert(tk.END, trending_predictor.main())
             case 2:  # analyze links
                 print()
                 # placeholder

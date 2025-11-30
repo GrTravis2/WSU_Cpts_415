@@ -38,7 +38,7 @@ trending_predictor = "scripts.analysis.trending_predictor:main"
 correlation_analysis = "big_data.scripts.analysis.correlation_analysis:entrypoint"
 
 [tool.setuptools.packages.find]
-where = ["big_data"]
+where = ["."]
 
 [tool.ruff]
 line-length = 120 # max line length

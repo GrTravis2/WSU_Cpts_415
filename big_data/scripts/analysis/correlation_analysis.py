@@ -1,160 +1,109 @@
-from pyspark.sql.functions import col, dayofmonth, month, year
-from pyspark.sql import SparkSession
-from pyspark.ml.stat import Correlation
-from pyspark.ml.feature import VectorAssembler
-from pymongo import MongoClient
 import argparse
-from scripts.analysis._cluster import spark_submit
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, dayofmonth, month, year
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.stat import Correlation
+from ._cluster import spark_submit
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", type=str, default="local")
-    parser.add_argument("--workers", type=int, default=2)
-    parser.add_argument("--mongo-uri", type=str,
-                        default="mongodb://localhost:27017")
-    parser.add_argument("--trial-id", type=int, default=0)
-    parser.add_argument("--use-cluster", action="store_true")
-    return parser.parse_args()
+def is_cluster():
+    return os.path.exists("/opt/spark")
 
 
-def load_mongo_data(spark):
+def new_spark_session(app_name):
+    if is_cluster():
+        mongo_uri = "mongodb://db:27017/youtube_analysis.videos"
+        master = "spark://master:7077"
+    else:
+        mongo_uri = "mongodb://127.0.0.1/youtube_analysis.videos"
+        master = "local[*]"
+    spark = (
+        SparkSession.builder
+        .master(master)
+        .appName(app_name)
+        .config("spark.mongodb.read.connection.uri", mongo_uri)
+        .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
+        .getOrCreate()
+    )
+    return spark
+
+
+def load_mongo(spark):
     df = (
-        spark.read
-        .format("mongodb")
+        spark.read.format("mongodb")
         .option("database", "youtube_analysis")
         .option("collection", "videos")
         .load()
     )
-
     return df.select(
-        col("video_desc.age_days").alias("age_days"),
-        col("video_attri.length").alias("length_seconds"),
+        col("video_attri.length_seconds").alias("length_seconds"),
         col("video_attri.rating").alias("video_rating"),
         col("video_engagement.views").alias("views"),
         col("video_engagement.num_ratings").alias("num_ratings"),
         col("video_engagement.num_comments").alias("num_comments"),
-        col("upload_date")
+        col("upload_date"),
     )
 
 
-def numeric_df(df):
-    return df.select(
-        col("age_days").cast("double").alias("age_days"),
-        col("length_seconds").cast("double").alias("length_seconds"),
-        col("num_comments").cast("double").alias("num_comments"),
-        col("num_ratings").cast("double").alias("num_ratings"),
-        col("upload_day").cast("double").alias("upload_day"),
-        col("upload_month").cast("double").alias("upload_month"),
-        col("upload_year").cast("double").alias("upload_year"),
-        col("video_rating").cast("double").alias("video_rating"),
-        col("views").cast("double").alias("views"),
+def save_heatmap(df, path):
+    data = df.values
+    labels = list(df.columns)
+    plt.figure(figsize=(10, 8))
+    plt.imshow(data, cmap="coolwarm", vmin=-1, vmax=1)
+    plt.colorbar(label="Correlation")
+    plt.xticks(np.arange(len(labels)), labels, rotation=90)
+    plt.yticks(np.arange(len(labels)), labels)
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close()
+
+
+def run_correlation():
+    spark = new_spark_session("CorrelationAnalysis")
+    df = load_mongo(spark)
+    df = df.withColumn("upload_day", dayofmonth("upload_date"))
+    df = df.withColumn("upload_month", month("upload_date"))
+    df = df.withColumn("upload_year", year("upload_date"))
+    df_num = df.select(
+        col("length_seconds").cast("double"),
+        col("num_comments").cast("double"),
+        col("num_ratings").cast("double"),
+        col("upload_day").cast("double"),
+        col("upload_month").cast("double"),
+        col("upload_year").cast("double"),
+        col("video_rating").cast("double"),
+        col("views").cast("double"),
     ).dropna()
-
-
-def compute_correlation(df):
-    numeric_cols = df.columns
-    assembler = VectorAssembler(inputCols=numeric_cols, outputCol="features")
-    vector_df = assembler.transform(df).select("features")
+    cols = df_num.columns
+    assembler = VectorAssembler(inputCols=cols, outputCol="features")
+    vdf = assembler.transform(df_num).select("features")
     corr_matrix = Correlation.corr(
-        vector_df, "features", "pearson").head()[0].toArray()
-
-    correlation = []
-    for i in range(len(numeric_cols)):
-        for j in range(i + 1, len(numeric_cols)):
-            correlation.append(
-                (numeric_cols[i], numeric_cols[j], round(corr_matrix[i][j], 4)))
-    return correlation
-
-
-def save_to_mongo(correlation, args):
-    client = MongoClient(args.mongo_uri)
-    db = client["youtube_analysis"]
-    collection = db["correlations"]
-
-    try:
-        db.command({"drop": "correlations"})
-    except:
-        pass
-
-    docs = []
-    for col1, col2, value in correlation:
-        if value > 0.3:
-            category = "Positive"
-        elif value < -0.3:
-            category = "Negative"
-        else:
-            category = "Near_Zero"
-
-        docs.append({
-            "col1": col1,
-            "col2": col2,
-            "value": value,
-            "category": category,
-            "trial_id": args.trial_id
-        })
-
-    if docs:
-        collection.insert_many(docs)
-
-
-def run_local(args):
-    import time
-    start = time.time()
-
-    master = "spark://master:7077" if args.mode == "cluster" else "local[*]"
-
-    spark = (
-        SparkSession.builder
-        .appName("CorrelationAnalysis")
-        .master(master)
-        .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0")
-        .config("spark.mongodb.connection.uri", "mongodb://db:27017")
-        .getOrCreate()
-    )
-
-    df = load_mongo_data(spark)
-    df = df.withColumn("upload_day", dayofmonth("upload_date")) \
-           .withColumn("upload_month", month("upload_date")) \
-           .withColumn("upload_year", year("upload_date"))
-
-    df_num = numeric_df(df)
-    correlation = compute_correlation(df_num)
-
-    save_to_mongo(correlation, args)
-
-    positives = [(a, b, v) for a, b, v in correlation if v > 0.3]
-    negatives = [(a, b, v) for a, b, v in correlation if v < -0.3]
-    near_zero = [(a, b, v) for a, b, v in correlation if -0.3 <= v <= 0.3]
-
-    print("\nPositive Correlations:")
-    for a, b, v in positives:
-        print(a, b, v)
-
-    print("\nNegative Correlations:")
-    for a, b, v in negatives:
-        print(a, b, v)
-
-    print("\nNear Zero Correlations:")
-    for a, b, v in near_zero:
-        print(a, b, v)
-
-    print(f"\nRuntime: {time.time() - start:.2f}s")
+        vdf, "features", "pearson").head()[0].toArray()
+    pdf = pd.DataFrame(corr_matrix, columns=cols, index=cols)
+    if is_cluster():
+        out = "/opt/spark/scripts/analysis/correlation_heatmap.png"
+    else:
+        out = "correlation_heatmap.png"
+    save_heatmap(pdf, out)
     spark.stop()
 
 
-def entrypoint():
-    args = parse_args()
-
-    if args.use_cluster:
+def main(use_cluster):
+    if use_cluster:
         spark_submit(
             "correlation_analysis.py",
             "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
         )
         return
+    run_correlation()
 
-    run_local(args)
 
-
-if __name__ == "__main__":
-    entrypoint()
+def entrypoint():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--use-cluster", action="store_true")
+    args = parser.parse_args()
+    main(args.use_cluster)

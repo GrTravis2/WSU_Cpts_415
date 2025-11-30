@@ -6,7 +6,8 @@ from tkinter import ttk
 
 from PIL import Image, ImageTk
 from scripts.analysis import trending_predictor
-
+from scripts.analysis import analyze_links
+from scripts.analysis import graph_filter
 
 class AlgorithmGUI:
     """class for gui display of algorithms."""
@@ -74,6 +75,7 @@ class AlgorithmGUI:
         match algorithm_num:
             case 1:  # trending predictor
                 # read from txt file and display
+                self.load_algorithm_image(algorithm_num)
                 try:
                     with open("text_outputs/trend_output.txt", "r") as file:
                         results = file.read()
@@ -85,20 +87,33 @@ class AlgorithmGUI:
                         results = file.read()
                         self.textbox.insert(tk.END, results + "\n")
                     self.textbox.insert(tk.END, "Error: trending_output.txt not found.\n")
-
             case 2:  # analyze links
-                print()
-                # placeholder
+                self.textbox.insert(tk.END, "Analyze Links Results In Image\n")
+                #load if already made, else run algo then load
+                try:
+                    self.load_algorithm_image(algorithm_num)
+                except Exception as e:
+                    self.textbox.insert(tk.END, f"Error loading image: {e}\n")
+                    analyze_links.main()
+                    analyze_links.main(show_results=True)
+                    self.load_algorithm_image(algorithm_num)
             case 3:  # correlate data
-                print()
-                # placeholder
+                self.textbox.insert(tk.END, "Correlation Analysis TODO\n")
+                self.load_algorithm_image(algorithm_num)
             case 4:  # filter graphs
-                print()
-                # placeholder
+                self.textbox.insert(tk.END, "Graph Filter Results In Image\n")
+                #load if already made, else run algo then load
+                try:
+                    self.load_algorithm_image(algorithm_num)
+                except Exception as e:
+                    self.textbox.insert(tk.END, f"Error loading image: {e}\n")
+                    graph_filter.main()
+                    self.load_algorithm_image(algorithm_num)
             case _:
+                self.load_algorithm_image(1) # blank
                 self.textbox.insert(tk.END, "Invalid algorithm number.\n")
 
-        self.load_algorithm_image(algorithm_num)
+        
 
     def load_algorithm_image(self, algorithm_num):
         """Load and display image for selected algorithm."""
@@ -106,7 +121,9 @@ class AlgorithmGUI:
         # output graphs to pictures folder and add paths here, one per algo
         image_files = {
             1: ["pictures/test1.jpg"],
-            2: ["pictures/test2.png"],
+            2: ["pictures/analyze_links.png"],
+            3: ["pictures/correlation_heatmap.png"],
+            4: ["pictures/graph_filter.png"],
         }
 
         image_candidates = image_files.get(algorithm_num, [])

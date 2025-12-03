@@ -15,12 +15,12 @@ def new_spark_session(app_name: str, *, host: str = "localhost", db_host: str = 
     """Create connection to mongodb using sparkSession object."""
     mongo_read_uri = f"mongodb://{db_host}/youtube_analysis.videos"
     mongo_write_uri = f"mongodb://{db_host}/youtube_analysis.trendCollection"
-    #mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
+    # mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
     spark: SparkSession = (  # init connection stuff
         SparkSession.builder.config("spark.driver.host", host)  # type: ignore
         .config("spark.mongodb.read.connection.uri", mongo_read_uri)
         .config("spark.mongodb.write.connection.uri", mongo_write_uri)
-        #.config("spark.jars.packages", mongo_conn)
+        # .config("spark.jars.packages", mongo_conn)
         .master("local")
         .appName(app_name)
         .getOrCreate()
@@ -375,7 +375,7 @@ def main():
         write_to_txt_file(output_str)
         return
 
-    spark = new_spark_session("trending_predictor")
+    spark = new_spark_session("trending_predictor", host="master", db_host="db:27017")
 
     # fmt: off
     df = (

@@ -67,10 +67,10 @@ def plot_image(df: pandas.DataFrame) -> None:
         ax=axes[3],
         title="num links vs age of video in days",
     )
-    plt.savefig("analyze_links.png")
+    plt.savefig("pictures/analyze_links.png")
 
 
-def main() -> None:
+def main(show_results: bool = False) -> None:
     """Script entry point."""
     parser = argparse.ArgumentParser(
         prog="YouTube data loader",
@@ -97,7 +97,7 @@ def main() -> None:
         _cluster.spark_submit("analyze_links.py", mongo_conn)
         return
 
-    if args.view_results:
+    if args.view_results or show_results:
         mongo = pymongo.MongoClient("localhost", 27017)
         links = mongo["youtube_analysis"].get_collection("analyze_links")
         df = pandas.DataFrame(list(links.find()))

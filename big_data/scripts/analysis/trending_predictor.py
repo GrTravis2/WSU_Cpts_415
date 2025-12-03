@@ -276,11 +276,63 @@ def write_to_mongodb(df, collection_name="trendCollection") -> None:
     print(f"Successfully wrote {df.count()} records to {collection_name}")
 
 
+def read_from_mongodb() -> None:
+    """Read pregenerated data from mongodb."""
+    # create a spark session to read the mongo collection as a Spark DataFrame
+    spark = new_spark_session("trending_predictor_read")
+
+    df = (
+        spark.read.format("mongodb")
+        .option("database", "youtube_analysis")
+        .option("collection", "trendCollection")
+        .load()
+    )
+
+    predictor = TrendingVideoPredictor()
+    output_lines = []
+    output_lines.append(f"Records loaded: {df.count()}")
+
+    # print feature breakdown (expects a Spark DataFrame)
+    output_lines.append(predictor.print_feature_breakdown(df, limit=20))
+
+    output_lines.append("\n=== TOP 20 TRENDING VIDEOS ===")
+    top20 = (
+        df.orderBy(func.desc("trending_score"))
+        .select(
+            "id",
+            "uploader_name",
+            "category",
+            "trending_score",
+            "views",
+            "age_days",
+            "category_rank",
+        )
+        .limit(20)
+        .collect()
+    )
+
+    header = f"{'ID':<15} {'Uploader':<20} {'Category':<15} {'Trend Score':<12} \
+        {'Views':<12} {'Age Days':<10} {'Cat Rank':<8}"
+    output_lines.append(header)
+    output_lines.append("-" * len(header))
+
+    for row in top20:
+        line = f"{row['id']:<15} {row['uploader_name']:<20} {row['category']:<15} {row['trending_score']:<12.3f} \
+            {row['views']:<12} {row['age_days']:<10} {row['category_rank']:<8}"
+        output_lines.append(line)
+
+    output_str = "\n".join(output_lines)
+    write_to_txt_file(output_str)
+
+    spark.stop()
+
+
 def write_to_txt_file(output_str, file_path="text_outputs/trend_output.txt") -> None:
     """Write output string to a text file."""
     with open(file_path, "w") as file:
         file.write(output_str)
     print(f"Results written to {file_path}")
+    return
 
 
 def main():
@@ -301,6 +353,7 @@ def main():
         help="query mongodb container for query results",
         default=False,
     )
+
     args = parser.parse_args()
 
     if args.use_cluster:

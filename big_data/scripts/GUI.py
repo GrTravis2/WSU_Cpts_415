@@ -5,9 +5,8 @@ import tkinter as tk
 from tkinter import ttk
 
 from PIL import Image, ImageTk
-from scripts.analysis import trending_predictor
-from scripts.analysis import analyze_links
-from scripts.analysis import graph_filter
+from scripts.analysis import analyze_links, graph_filter, trending_predictor
+
 
 class AlgorithmGUI:
     """class for gui display of algorithms."""
@@ -32,12 +31,7 @@ class AlgorithmGUI:
 
     def create_buttons(self):
         """Create buttons for algorithms."""
-        button_texts = [
-            "Predict Trends",
-            "Analyze Links",
-            "Correlate Data",
-            "Filter Graphs",
-        ]
+        button_texts = ["Predict Trends", "Analyze Links", "Correlate Data", "Filter Graphs", "Reload Trends"]
 
         self.buttons = []
 
@@ -75,21 +69,21 @@ class AlgorithmGUI:
         match algorithm_num:
             case 1:  # trending predictor
                 # read from txt file and display
-                self.load_algorithm_image(algorithm_num)
                 try:
+                    self.load_algorithm_image(algorithm_num)
                     with open("text_outputs/trend_output.txt", "r") as file:
                         results = file.read()
                         self.textbox.insert(tk.END, results + "\n")
                 except FileNotFoundError:
-                    # attempt to load if not populated
-                    trending_predictor.main()
+                    self.load_algorithm_image(algorithm_num)
+                    trending_predictor.read_from_mongodb()
                     with open("text_outputs/trend_output.txt", "r") as file:
                         results = file.read()
                         self.textbox.insert(tk.END, results + "\n")
-                    self.textbox.insert(tk.END, "Error: trending_output.txt not found.\n")
+
             case 2:  # analyze links
                 self.textbox.insert(tk.END, "Analyze Links Results In Image\n")
-                #load if already made, else run algo then load
+                # load if already made, else run algo then load
                 try:
                     self.load_algorithm_image(algorithm_num)
                 except Exception as e:
@@ -102,18 +96,22 @@ class AlgorithmGUI:
                 self.load_algorithm_image(algorithm_num)
             case 4:  # filter graphs
                 self.textbox.insert(tk.END, "Graph Filter Results In Image\n")
-                #load if already made, else run algo then load
+                # load if already made, else run algo then load
                 try:
                     self.load_algorithm_image(algorithm_num)
                 except Exception as e:
                     self.textbox.insert(tk.END, f"Error loading image: {e}\n")
                     graph_filter.main()
                     self.load_algorithm_image(algorithm_num)
+            case 5:  # reload trends from mongodb and display
+                self.load_algorithm_image(algorithm_num)
+                trending_predictor.read_from_mongodb()
+                with open("text_outputs/trend_output.txt", "r") as file:
+                    results = file.read()
+                    self.textbox.insert(tk.END, results + "\n")
             case _:
-                self.load_algorithm_image(1) # blank
+                self.load_algorithm_image(1)  # blank
                 self.textbox.insert(tk.END, "Invalid algorithm number.\n")
-
-        
 
     def load_algorithm_image(self, algorithm_num):
         """Load and display image for selected algorithm."""

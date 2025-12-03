@@ -21,7 +21,7 @@ services:
     environment:
       - SPARK_MASTER_URL=spark://master:7077
       - SPARK_WORKER_CORES=1    # assume 1 core
-      - SPARK_WORKER_MEMORY=4G  # and 1Gb of RAM
+      - SPARK_WORKER_MEMORY=1G  # and 1Gb of RAM
       - SPARK_NO_DAEMONIZE=1       # sleep instead of terminate
     volumes:
       - spark-events:/opt/spark/spark-events
@@ -43,7 +43,7 @@ services:
     image: mongo:8-noble
     container_name: db
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db # persist mongodb data which is in /data/db by default!
 volumes:

@@ -64,7 +64,9 @@ def plot_image(df: pandas.DataFrame) -> None:
         ax=axes[2],
         title="Group Size vs Distinct Categories",
     )
-    plt.savefig("graph_filter.png")
+    #also save to local file
+
+    plt.savefig("pictures/graph_filter.png")
 
 
 def main() -> None:

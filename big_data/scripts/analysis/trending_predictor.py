@@ -2,11 +2,13 @@
 
 import argparse
 
+import pandas
+import pymongo
+import scripts.analysis._cluster as _cluster
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import StandardScaler, VectorAssembler
 from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as func
-from scripts.analysis import _cluster
 
 
 def new_spark_session(app_name: str, *, host: str = "localhost", db_host: str = "localhost") -> SparkSession:
@@ -276,11 +278,70 @@ def write_to_mongodb(df, collection_name="trendCollection") -> None:
     print(f"Successfully wrote {df.count()} records to {collection_name}")
 
 
-def main() -> None:
+def read_from_mongodb() -> None:
+    """Read pregenerated data from mongodb."""
+    # create a spark session to read the mongo collection as a Spark DataFrame
+    spark = new_spark_session("trending_predictor_read")
+
+    df = (
+        spark.read.format("mongodb")
+        .option("database", "youtube_analysis")
+        .option("collection", "trendCollection")
+        .load()
+    )
+
+    predictor = TrendingVideoPredictor()
+    output_lines = []
+    output_lines.append(f"Records loaded: {df.count()}")
+
+    # print feature breakdown (expects a Spark DataFrame)
+    output_lines.append(predictor.print_feature_breakdown(df, limit=20))
+
+    output_lines.append("\n=== TOP 20 TRENDING VIDEOS ===")
+    top20 = (
+        df.orderBy(func.desc("trending_score"))
+        .select(
+            "id",
+            "uploader_name",
+            "category",
+            "trending_score",
+            "views",
+            "age_days",
+            "category_rank",
+        )
+        .limit(20)
+        .collect()
+    )
+
+    header = f"{'ID':<15} {'Uploader':<20} {'Category':<15} {'Trend Score':<12} \
+        {'Views':<12} {'Age Days':<10} {'Cat Rank':<8}"
+    output_lines.append(header)
+    output_lines.append("-" * len(header))
+
+    for row in top20:
+        line = f"{row['id']:<15} {row['uploader_name']:<20} {row['category']:<15} {row['trending_score']:<12.3f} \
+            {row['views']:<12} {row['age_days']:<10} {row['category_rank']:<8}"
+        output_lines.append(line)
+
+    output_str = "\n".join(output_lines)
+    write_to_txt_file(output_str)
+
+    spark.stop()
+
+
+def write_to_txt_file(output_str, file_path="text_outputs/trend_output.txt") -> None:
+    """Write output string to a text file."""
+    with open(file_path, "w") as file:
+        file.write(output_str)
+    print(f"Results written to {file_path}")
+    return
+
+
+def main():
     """Script entry point."""
     parser = argparse.ArgumentParser(
-        prog="Link reference analysis.",
-        description="Link reference analysis.",
+        prog="Trend algorithm script",
+        description="calculate trending video scores",
     )
     parser.add_argument(
         "--use-cluster",
@@ -294,18 +355,27 @@ def main() -> None:
         help="query mongodb container for query results",
         default=False,
     )
+
     args = parser.parse_args()
 
     if args.use_cluster:
         # pass script to spark cluster and let it do the work before exiting
+        # script = pathlib.Path("big_data/scripts/analysis/trending_predictor.py")
         mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
         _cluster.spark_submit("trending_predictor.py", mongo_conn)
         return
-
     if args.view_results:
-        """Do whatever algo output here"""
+        mongo = pymongo.MongoClient("localhost", 27017)
+        trends = mongo["youtube_analysis"].get_collection("trendCollection")
+        df = pandas.DataFrame(list(trends.find()))
+        output_lines = []
+        output_lines.append("Top Trending Videos from MongoDB:\n")
+        output_lines.append(df.head(20).to_string())
+        output_str = "\n".join(output_lines)
+        write_to_txt_file(output_str)
         return
-    spark = new_spark_session("trending_predictor", db_host="db:27017")
+
+    spark = new_spark_session("trending_predictor")
 
     # fmt: off
     df = (
@@ -352,8 +422,9 @@ def main() -> None:
     write_to_mongodb(results, "trendCollection")
 
     spark.stop()
-
-    # return "\n".join(output_lines)
+    output_str = "\n".join(output_lines)
+    write_to_txt_file(output_str)
+    return
 
 
 if __name__ == "__main__":

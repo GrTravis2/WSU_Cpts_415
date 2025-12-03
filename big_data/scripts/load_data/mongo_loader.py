@@ -48,6 +48,12 @@ class MongoDBLoader:
     def create_indexes(self) -> None:
         """Lookup indexes."""
         # fast lookup indexes, kinda cool
+        try:
+            self.collection.drop_indexes()
+            print("Dropped existing indexes")
+        except Exception as e:
+            print(f"Error dropping indexes: {e}")
+        
         self.collection.create_index(
             [("upload_date", 1), ("id", 1)],
             unique=True,

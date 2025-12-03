@@ -11,13 +11,15 @@ from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as func
 
 
-def new_spark_session(app_name: str, host: str = "localhost") -> SparkSession:
+def new_spark_session(app_name: str, *, host: str = "localhost", db_host: str = "localhost") -> SparkSession:
     """Create connection to mongodb using sparkSession object."""
-    mongo_uri = "mongodb://127.0.0.1/youtube_analysis.videos"
+    mongo_read_uri = f"mongodb://{db_host}/youtube_analysis.videos"
+    mongo_write_uri = f"mongodb://{db_host}/youtube_analysis.analyze_links"
     mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
     spark: SparkSession = (  # init connection stuff
         SparkSession.builder.config("spark.driver.host", host)  # type: ignore
-        .config("spark.mongodb.read.connection.uri", mongo_uri)
+        .config("spark.mongodb.read.connection.uri", mongo_read_uri)
+        .config("spark.mongodb.write.connection.uri", mongo_write_uri)
         .config("spark.jars.packages", mongo_conn)
         .master("local")
         .appName(app_name)

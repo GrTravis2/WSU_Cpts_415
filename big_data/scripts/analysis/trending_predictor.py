@@ -9,16 +9,16 @@ from pyspark.sql import functions as func
 from scripts.analysis import _cluster
 
 
-def new_spark_session(app_name: str, host: str = "localhost", db_host: str = "localhost") -> SparkSession:
+def new_spark_session(app_name: str, *, host: str = "localhost", db_host: str = "localhost") -> SparkSession:
     """Create connection to mongodb using sparkSession object."""
     mongo_read_uri = f"mongodb://{db_host}/youtube_analysis.videos"
     mongo_write_uri = f"mongodb://{db_host}/youtube_analysis.trendCollection"
-    mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
+    #mongo_conn = "org.mongodb.spark:mongo-spark-connector_2.12:10.5.0"
     spark: SparkSession = (  # init connection stuff
         SparkSession.builder.config("spark.driver.host", host)  # type: ignore
         .config("spark.mongodb.read.connection.uri", mongo_read_uri)
         .config("spark.mongodb.write.connection.uri", mongo_write_uri)
-        .config("spark.jars.packages", mongo_conn)
+        #.config("spark.jars.packages", mongo_conn)
         .master("local")
         .appName(app_name)
         .getOrCreate()

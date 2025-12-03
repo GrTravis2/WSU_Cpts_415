@@ -1,4 +1,4 @@
-Records loaded: 811829
+Records loaded: 650
 
 ================================================================================
 STATS FOR TOP VIDEOS
@@ -410,25 +410,25 @@ Final Scores:
 --------------------------------------------------------------------------------
 
 === TOP 20 TRENDING VIDEOS ===
-ID              Uploader             Category        Trend Score           Views        Age Days   Cat Rank
------------------------------------------------------------------------------------------------------------
-tScm-eZInBE     nicepaul             Entertainment               826.760      2675254      720        1
-6gmP4nk0EOE     mwesch               Howto & DIY                 817.487      1353059      715        1
-C0f2dHJ6A18     vlogkarate           Comedy                      799.006      1510728      721        1
-zRVts7TFw-Y     Philinthecircle      Film & Animation             785.639      607456       716        1
-OMndH4egfSk     ConfessionsTour06    Music                       783.237      1258781      724        1
-4G-D0F4Q9yk     Zebro                News & Politics             777.403      882123       716        1
-7wt5FiZQrgM     CocaColaSuperbowl    Gadgets & Games             775.578      1399531      716        1
-zx2ytr2Oyv4     dailybean            News & Politics             774.252      647446       716        2
-0cTkMzQ7Zf0     BrookeHNet           Entertainment               773.915      1105147      720        2
-Qehxjub5lyo     jgrandin1            Entertainment               769.905      944984       715        3
-IsyWlcQAy-Q     spaceship            Entertainment               769.260      2486628      731        4
-tM1WzRzEZ5U     adultswimdotcom      Comedy                      766.378      721419       717        2
-S2n1_h3Bvt0     BrookeHNet           Entertainment               763.981      1271990      724        5
-5q5uoEU8RRk     smosh                Comedy                      763.198      376928       718        3
-TZ860P4iTaM     burnellyow           Pets & Animals              762.755      913436       712        1
-qHO8l-Bd1O4     current              News & Politics             761.993      425284       728        3
-OL50ddCSJmo     IslandofMystery      Entertainment               761.467      463706       734        6
-HVZsSQZ010A     yui2006xp            Film & Animation             759.580      451336       730        2
-F6EPjnQEZWs     adultswimdotcom      Comedy                      757.086      733313       716        4
-OaJXE4wojTk     AcesVsKings          Comedy                      754.122      529669       722        5
+ID              Uploader             Category        Trend Score  Views        Age Days   Cat Rank
+--------------------------------------------------------------------------------------------------
+tScm-eZInBE     nicepaul             Entertainment   826.760      2675254      720        1
+6gmP4nk0EOE     mwesch               Howto & DIY     817.487      1353059      715        1
+C0f2dHJ6A18     vlogkarate           Comedy          799.006      1510728      721        1
+zRVts7TFw-Y     Philinthecircle      Film & Animation 785.639      607456       716        1
+OMndH4egfSk     ConfessionsTour06    Music           783.237      1258781      724        1
+4G-D0F4Q9yk     Zebro                News & Politics 777.403      882123       716        1
+7wt5FiZQrgM     CocaColaSuperbowl    Gadgets & Games 775.578      1399531      716        1
+zx2ytr2Oyv4     dailybean            News & Politics 774.252      647446       716        2
+0cTkMzQ7Zf0     BrookeHNet           Entertainment   773.915      1105147      720        2
+Qehxjub5lyo     jgrandin1            Entertainment   769.905      944984       715        3
+IsyWlcQAy-Q     spaceship            Entertainment   769.260      2486628      731        4
+tM1WzRzEZ5U     adultswimdotcom      Comedy          766.378      721419       717        2
+S2n1_h3Bvt0     BrookeHNet           Entertainment   763.981      1271990      724        5
+5q5uoEU8RRk     smosh                Comedy          763.198      376928       718        3
+TZ860P4iTaM     burnellyow           Pets & Animals  762.755      913436       712        1
+qHO8l-Bd1O4     current              News & Politics 761.993      425284       728        3
+OL50ddCSJmo     IslandofMystery      Entertainment   761.467      463706       734        6
+HVZsSQZ010A     yui2006xp            Film & Animation 759.580      451336       730        2
+F6EPjnQEZWs     adultswimdotcom      Comedy          757.086      733313       716        4
+OaJXE4wojTk     AcesVsKings          Comedy          754.122      529669       722        5

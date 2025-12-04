@@ -37,7 +37,7 @@ load_data_mongo = "scripts.load_data.mongo_loader:main"
 analyze_links = "scripts.analysis.analyze_links:main"
 graph_filter = "scripts.analysis.graph_filter:main"
 trending_predictor = "scripts.analysis.trending_predictor:main"
-correlation_analysis = "big_data.scripts.analysis.correlation_analysis:entrypoint"
+correlation_analysis = "scripts.analysis.correlation_analysis:entrypoint"
 gui = "scripts.GUI:main"
 
 [tool.setuptools.packages.find]

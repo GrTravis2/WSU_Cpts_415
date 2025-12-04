@@ -104,7 +104,7 @@ def main(show_results: bool = False) -> None:
         plot_image(df)
         return
 
-    spark = new_spark_session("analyze_links", db_host="db:27017")
+    spark = new_spark_session("analyze_links", host="master", db_host="db:27017")
 
     # linters disagree here and I dont know how to fix T_T
     # fmt: off

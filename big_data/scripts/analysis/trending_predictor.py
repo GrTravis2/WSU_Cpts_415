@@ -375,7 +375,7 @@ def main():
         write_to_txt_file(output_str)
         return
 
-    spark = new_spark_session("trending_predictor")
+    spark = new_spark_session("trending_predictor", host="master", db_host="db:27017")
 
     # fmt: off
     df = (
